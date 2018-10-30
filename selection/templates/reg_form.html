@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="wrap">
+    <form  method="post" >
+        {% csrf_token %}
+      <div class="fields"> Username <br><br> {{ form.username }}</div>
+
+
+      <div class="fields"> Password <br><br>
+           <div class = 'error1' >
+             {% if error1 %}
+        <p style="color: red;">
+            Please enter password of atleast 8 characters or more.
+        </p>
+        {% endif %}
+        </div>
+          {{ form.password1 }}
+      </div>
+
+
+
+      <div class="fields"> Repeat Password <br><br>
+          <div class="error2">
+            {% if error2 %}
+        <p style="color: red;">
+            Please enter confirm password (same as password)
+        </p>
+        {% endif %}{{ form.password2 }} </div>
+
+      <input class="button-custom" type="submit" value="REGISTER">
+    </form>
+  </div>
+{% endblock content %}
