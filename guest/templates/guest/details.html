@@ -1,10 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'guest/base.html' %}
+
+{% block content %}
+
+
+<div class = "info">
+
+<h1> Available No of rooms are {{ count }} </h1>
+
+<div class = 'avail' >
+    {% for room in rooms %}
+
+    <h3> Room no - {{room.no}} </h3> <br>
+    <h3> Price - {{room.price}}</h3>
+    <br> <br>
+
+    {% endfor %}
+    </div>
+
+</div>
+
+{% if count %}
+<a href="{% url 'guest:select' res.booking_id %}"> Select a Room </a>
+{% else %}
+<h1>No Rooms Available</h1>
+{% endif %}
+
+<!--<div class="wrap">-->
+    <!--<form action="" method="post">-->
+        <!--{% csrf_token %}-->
+      <!--<div class="fields">{{ form.as_p }}</div>-->
+      <!--<input class="button-custom" type="submit" value="SELECT">-->
+    <!--</form>-->
+  <!--</div>-->
+
+{% endblock content %}
+
+
+
+
+{% block more_links %}
+    <!--<a href="{% url 'login' %}">Login</a>-->
+    <!--<a href="{% url 'reg_form' %}">Register</a>-->
+{% endblock more_links %}
+
+
+

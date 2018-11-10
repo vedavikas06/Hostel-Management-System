@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'guest/base.html' %}
+
+{% block content %}
+
+
+<div class = "guest">
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" class = "btn btn-primary" value="Submit">
+</form>
+
+</div>
+
+{% endblock content %}
+
+
+
+
+{% block more_links %}
+    <!--<a href="{% url 'login' %}">Login</a>-->
+    <!--<a href="{% url 'reg_form' %}">Register</a>-->
+{% endblock more_links %}

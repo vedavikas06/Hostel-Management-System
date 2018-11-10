@@ -1,7 +1,26 @@
-{% extends 'guest/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking</title>
+    <style type="text/css">
+        .wrapper {
+            margin: 0 auto;
+            padding: 40px;
+            max-width: 800px;
+        }
+        .table {
+            margin: 0 0 40px 0;
+            width: 100%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            display: table;
+        }
 
-{% block content %}
 
+    </style>
+
+</head>
+<body>
     <div class="wrapper">
         <div class="table">
 
@@ -18,7 +37,7 @@
                     Last Name
                 </div>
                 <div class="cell">
-                    {{ res.guest.last_name}}
+                    {{ res.rguest.last_name}}
                 </div>
             </div>
             <div class="row">
@@ -74,13 +93,5 @@
                 </div>
             </div>
 
-            <a class="btn btn-success" href="{% url 'guest:confirm' res.booking_id %}"> Confirm Booking </a>
-
-            <a class="btn btn-danger" href="{% url 'guest:cancel' res.booking_id %}"> Cancel Booking </a>
-
-{% endblock content %}
-
-
-{% block more_links %}
-
-{% endblock more_links %}
+</body>
+</html>
