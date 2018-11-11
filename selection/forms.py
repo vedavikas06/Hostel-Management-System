@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 
 class UserForm(UserCreationForm):
-    password1 = forms.CharField(min_length=5, max_length=30, widget=forms.PasswordInput(render_value=False))
+    password1 = forms.CharField(min_length=8, max_length=30, widget=forms.PasswordInput(render_value=False))
 
     class Meta:
         model = User

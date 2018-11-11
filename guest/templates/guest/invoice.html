@@ -3,95 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <title>Booking</title>
-    <style type="text/css">
-        .wrapper {
-            margin: 0 auto;
-            padding: 40px;
-            max-width: 800px;
-        }
-        .table {
-            margin: 0 0 40px 0;
-            width: 100%;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            display: table;
-        }
 
-
-    </style>
 
 </head>
 <body>
-    <div class="wrapper">
-        <div class="table">
+<table>
 
-            <div class="row">
-                <div class="cell">
+
+
+            <tr>
+                <td>
                     First Name
-                </div>
-                <div class="cell">
+                </td>
+                <td>
                     {{ res.guest.first_name }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="cell">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
                     Last Name
-                </div>
-                <div class="cell">
-                    {{ res.rguest.last_name}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="cell">
+                </td>
+                <td>
+                    {{ res.guest.last_name}}
+                </td>
+            </tr>
+            <tr>
+                <td>
                     Phone no
-                </div>
-                <div class="cell">
+                </td>
+                <td>
                     {{ res.guest.phone }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="cell">
+                </td>
+            </tr>
+            <tr>
+                <td>
                     E-Mail
-                </div>
-                <div class="cell">
+                </td>
+                <td>
                     {{ res.guest.email }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="cell">
+                </td>
+            </tr>
+            <tr >
+                <td>
                     city
-                </div>
-                <div class="cell">
+                </td>
+                <td>
                     {{ res.guest.city }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="cell">
-                    Room
-                </div>
-                <div class="cell">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Room No..
+                </td>
+                <td>
                      {{ res.room.no }} in Guest House
 
-                </div>
-            </div>
-            <div class="row">
-                <div class="cell">
+                </td>
+            </tr>
+            <tr>
+                <td>
                     CheckIn
-                </div>
-                <div class="cell">
+                </td>
+                <td>
                      {{ res.checkIn }}
 
-                </div>
-            </div>
+                </td>
+            </tr>
 
-            <div class="row">
-                <div class="cell">
+            <tr>
+                <td>
                     CheckOut
-                </div>
-                <div class="cell">
+                </td>
+                <td>
                      {{ res.checkOut }}
 
-                </div>
-            </div>
+                </td>
+            </tr>
+
+
+
+
+</table>
+
+<br>
+<br>
+
+
+
 
 </body>
 </html>

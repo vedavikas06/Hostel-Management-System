@@ -1,9 +1,14 @@
 from django.contrib import admin
 from django.urls import path
 from selection import views
+from django.conf.urls import include, url
+from django.conf import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # url(r'^', include(('selection.urls', 'selection'), namespace='selection')),
+    url(r'^guest/', include('guest.urls', namespace='guest')),
     path('', views.home, name='register'),
     path('reg_form/', views.register, name='reg_form'),
     path('login/', views.user_login, name='login'),

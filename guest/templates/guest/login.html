@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'guest/base.html' %}
+
+{% block content %}
+<div class="wrap">
+    <form action="" method="post">
+        {% csrf_token %}
+      <div class="fields"> Username <br><br> {{ form.username }}</div>
+      <div class="fields"> Password <br><br> {{ form.password }}</div>
+      <input class="button-custom" type="submit" value="LOGIN">
+    </form>
+  </div>
+{% endblock content %}
+
+
+{% block more_links %}
+    <a href="{% url 'guest:login' %}">Login</a>
+    <a href="{% url 'guest:register' %}">Register</a>
+{% endblock more_links %}

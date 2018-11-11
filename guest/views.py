@@ -4,12 +4,83 @@ from django.http import HttpResponse
 from .forms import *
 import datetime
 from .models import Room,Reservation,Guest
-
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.template.loader import get_template
 from .utils import render_to_pdf
 # Create your views here.
 
 
+def start(request):
+    return render(request, 'guest/start.html')
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        # error1, error2 = False, False
+        print(form.is_valid())
+        if form.is_valid():
+            new_user = form.save(commit=False)
+            new_user.save()
+            Guest.objects.create(user=new_user)
+            cd = form.cleaned_data
+            print(str(cd))
+            user = authenticate(
+                request,
+                username=cd['username'],
+                password=cd['password1'])
+
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return redirect('guest:home')
+                else:
+
+                    return HttpResponse('Disabled account')
+            else:
+
+                return HttpResponse('Invalid Login')
+        else:
+            form = UserForm()
+            args = {'form': form}
+            return render(request, 'reg_form.html', args)
+        # elif len(form.data['password1']) <= 8 or len(form.data['password2']) <= 8:
+        #     if len(form.data['password1']) <= 8:
+        #         error1 = True
+        #     if len(form.data['password2']) <= 8:
+        #         error2 = True
+        #     return render(request, 'reg_form.html', {'form': form, 'error1': error1, 'error2': error2})
+
+    else:
+
+        form = UserForm()
+        args = {'form': form}
+        return render(request, 'guest/reg_form.html', args)
+
+
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(
+                request,
+                username=cd['username'],
+                password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return redirect('guest:home')
+                else:
+                    return HttpResponse('Disabled account')
+            else:
+                return HttpResponse('Invalid Login')
+    else:
+        form = LoginForm()
+        return render(request, 'guest/login.html', {'form': form})
+
+@login_required
 def home(request):
     print(request.method)
     if request.method == "POST":
@@ -27,8 +98,8 @@ def home(request):
                 x = Room.objects.none()
                 print(Room.objects.all())
                 for room in Room.objects.all():
-                    RoomsBooked = Reservation.objects.filter(room=room).filter(checkIn__lte=end_date,
-                                                                               checkOut__gte=start_date)
+                    RoomsBooked = Reservation.objects.filter(room=room,room_alloted=True).\
+                        filter(checkIn__lte=end_date,checkOut__gte=start_date)
                     print(RoomsBooked)
                     count = RoomsBooked.count()
                     count = int(count)
@@ -37,19 +108,23 @@ def home(request):
                         x = x | Room.objects.filter(pk = room.pk)
                 print(cnt)
                 print(x)
+                res = form.save(commit=False)
                 if cnt > 0:
-                    res = form.save(commit = False)
-                    res.save()
 
+                    res.save()
+                    request.session['booking_id'] = res.booking_id
                     # form.save(form.save(commit=False))
                     # form = SelectionForm(instance=request.reservation)
                     # form.fields["room"].queryset = x
                     args = {'rooms': x, 'count': cnt, 'res': res}
                     return render(request, 'guest/details.html', args)
                 else:
-                    return HttpResponse('<h1> No Rooms </h1>')
+                    return HttpResponse("<h1> No Rooms </h1> <br> <br> <a href =  '' >"
+                                        " Book Again! </a> ")
             else:
-                return HttpResponse('<h1> Invalid request </h1>')
+
+                return HttpResponse("<h1> Invalid request </h1> <br> <br> <a href = '' >"
+                                        " Book Again! </a> ")
         else:
             form = DateForm()
             print(request.method)
@@ -60,21 +135,20 @@ def home(request):
         print(request.method)
         return render(request, 'guest/home.html', {'form': form})
 
-
+@login_required
 def edit(request, res_id):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST,instance=request.user.guest)
         res = Reservation.objects.get(pk=res_id)
         if form.is_valid():
-            if res.room_alloted == False:
-                new_guest = form.save(commit=True)
+            if (not res.room_alloted) and (request.session['room']):
+                form.save(commit=True)
 
                 room = Room.objects.get(no=request.session['room'])
                 res.room = room
+                del request.session['room']
 
-                res.room_alloted = True
-                room = res.room
-                res.guest = new_guest
+                res.guest = request.user.guest
                 res.save()
 
                 return render(request, 'guest/profile.html', {'res': res})
@@ -83,14 +157,15 @@ def edit(request, res_id):
                 return HttpResponse("<h1> Invalid Request </h1>")
         else:
             res.delete()
-            return HttpResponse("<h1> Wrong Credentials </h1> <br> <br> <a href = {% url 'guest:home' %} >"
+            return HttpResponse("<h1> Wrong Credentials </h1> <br> <br> <a href = {% url '../../home' %} >"
                                 " Book Again! </a> ")
 
     else:
-        form = RegistrationForm(instance=Reservation.objects.get(pk=res_id))
-        return render(request, 'guest/edit.html', {'form': form})
+        form = RegistrationForm(instance=request.user.guest)
+        return render(request, 'guest/edit.html', {'form': form,'res':res_id})
 
 
+@login_required
 def select(request, res_id):
 
     if request.method == 'POST':
@@ -102,7 +177,7 @@ def select(request, res_id):
             # kwargs = {"room": res_now.room}
             return redirect('guest:edit', res_id =res_id)
     else:
-        print(id)
+        print('res_id',res_id)
         res = Reservation.objects.get(pk=res_id)
         form = SelectionForm(instance=res)
         start_date = res.checkIn
@@ -111,35 +186,58 @@ def select(request, res_id):
         print(Room.objects.all())
         cnt = 0
         for room in Room.objects.all():
-            RoomsBooked = Reservation.objects.filter(room=room).filter(checkIn__lte=end_date,
-                                                                       checkOut__gte=start_date)
+            RoomsBooked = Reservation.objects.filter(room=room,room_alloted=True).\
+                filter(checkIn__lte=end_date, checkOut__gte=start_date)
             print(RoomsBooked.values())
             count = RoomsBooked.count()
             count = int(count)
             if count == 0:
                 cnt += 1
                 x = x | Room.objects.filter(pk=room.pk)
+        if res.room:
+            x = x | Room.objects.filter(pk=res.room.pk)
+            cnt = cnt +1
         print(cnt)
         print(x)
         form.fields["room"].queryset = x
-        return render(request, 'guest/select.html', {'form': form})
+        return render(request, 'guest/select.html', {'form': form,'res':res})
 
+@login_required
+def bookings(request):
+    guest = request.user.guest
+    all_bookings = Reservation.objects.filter(guest=guest,room_alloted = True)
+    print(all_bookings.count)
+    return render(request,'guest/bookings.html',{"bookings":all_bookings,"guest":guest})
 
+@login_required
 def confirm(request,res_id):
+    res = Reservation.objects.get(pk=res_id)
 
+    res.room_alloted = True
+    res.save()
+    return HttpResponse("<h1> Booking Successful!! </h1> <br> <a href=\"../../home\"> Book Again! </a>")
+
+@login_required
+def generate_pdf(request,res_id):
     booking = Reservation.objects.get(pk = res_id)
     data = {
         'res': booking
     }
     pdf = render_to_pdf('guest/invoice.html', data)
     if pdf is None:
+        booking.guest.delete()
         booking.delete()
         return HttpResponse("<h1>Error While Loading!! <br> Try Again</h1>")
     return HttpResponse(pdf, content_type='application/pdf')
 
-
+@login_required
 def cancel(request,res_id):
     booking = Reservation.objects.get(pk=res_id)
     booking.delete()
 
-    return HttpResponse("<h1> Booking Cancelled </h1>")
+    return HttpResponse('<h1> Booking Cancelled </h1> <br> <a href=\"../../home\"> Book Again! </a>')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('/guest')

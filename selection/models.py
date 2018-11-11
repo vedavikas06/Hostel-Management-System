@@ -39,7 +39,7 @@ class Student(models.Model):
     no_dues = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.enrollment_no
+        return str(self.enrollment_no)
 
 
 class Room(models.Model):
@@ -86,11 +86,15 @@ class Warden(models.Model):
         null=True,
         on_delete=models.CASCADE)
     name = models.CharField(max_length=200, null=True)
-    hostel = models.ForeignKey('Hostel',
-        default=None,
-        null=True,
-        on_delete=models.CASCADE)
+    hostel = models.ForeignKey('Hostel',default=None,null=True,
+                               on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.user.is_warden is False:  # Set default reference
+            self.user.is_warden = True
+            self.user.save()
+        super(Warden, self).save(*args, **kwargs)
 

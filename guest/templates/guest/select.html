@@ -12,9 +12,8 @@
 
 
 {% block more_links %}
-    <!--<a href="{% url 'edit' %}">-->
-            <!--Update Details-->
-        <!--</a>-->
+    <a href="{% url 'guest:cancel' res.booking_id %}">Cancel Booking</a>
+       <a href="{% url 'guest:logout' %}">Logout</a>
         <!--<a href="{% url 'select' %}">-->
             <!--Select a Room-->
         <!--</a>-->

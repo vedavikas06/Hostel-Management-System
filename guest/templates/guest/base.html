@@ -1,11 +1,13 @@
 <html>
 
 <head>
-    <script>
-      function preventBack(){window.history.forward();}
-      setTimeout("preventBack()", 0);
-      window.onunload=function(){null};
-    </script>
+    <!--<script>-->
+
+      <!--function preventBack(){window.history.forward();}-->
+      <!--setTimeout("preventBack()", 0);-->
+      <!--window.onunload=function(){null};-->
+
+    <!--</script>-->
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -13,7 +15,8 @@
     <style type="text/css">
 
         @import url(https://fonts.googleapis.com/css?family=Inconsolata:700);
-
+    {% block design %}
+    {% endblock design %}
 
         body {
             font-family: 'Inconsolata', sans-serif;
@@ -542,7 +545,7 @@
 <div class="nav">
     <div class="nav-header">
         <div class="nav-title">
-            <a href="{% url 'guest:home' %}">Guest House Booking</a>
+            <a href="{% url 'guest:start' %}">Guest House Booking</a>
         </div>
     </div>
     <!--<div class="nav-btn">-->

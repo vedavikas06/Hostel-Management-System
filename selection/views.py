@@ -13,7 +13,7 @@ def home(request):
 def register(request):
     if request.method == 'POST':
         form = UserForm(request.POST)
-        error1, error2 = False, False
+        # error1, error2 = False, False
         print(form.is_valid())
         if form.is_valid():
             new_user = form.save(commit=False)
@@ -36,12 +36,16 @@ def register(request):
             else:
 
                 return HttpResponse('Invalid Login')
-        elif len(form.data['password1']) < 8 or len(form.data['password2']) < 8:
-            if len(form.data['password1']) < 8:
-                error1 = True
-            if len(form.data['password2']) < 8:
-                error2 = True
-            return render(request, 'reg_form.html', {'form': form, 'error1': error1, 'error2': error2})
+        else:
+            form = UserForm()
+            args = {'form': form}
+            return render(request, 'reg_form.html', args)
+        # elif len(form.data['password1']) <= 8 or len(form.data['password2']) <= 8:
+        #     if len(form.data['password1']) <= 8:
+        #         error1 = True
+        #     if len(form.data['password2']) <= 8:
+        #         error2 = True
+        #     return render(request, 'reg_form.html', {'form': form, 'error1': error1, 'error2': error2})
 
     else:
 
@@ -116,15 +120,18 @@ def edit(request):
 
 @login_required
 def select(request):
-    if request.user.student.room:
-        room_id_old = request.user.student.room_id
 
     if request.method == 'POST':
+        if request.user.student.room:
+            room_id_old = request.user.student.room_id
+
         if not request.user.student.no_dues:
             return HttpResponse('You have dues. Please contact your Hostel Caretaker or Warden')
         form = SelectionForm(request.POST, instance=request.user.student)
         if form.is_valid():
             if request.user.student.room_id:
+                # stud = form.save(commit=False)
+                # print(request.user.student.room_id, stud.room_id)
                 request.user.student.room_allotted = True
                 r_id_after = request.user.student.room_id
                 room = Room.objects.get(id=r_id_after)
@@ -144,7 +151,8 @@ def select(request):
                     room.save()
                 except BaseException:
                     pass
-            form.save()
+            student  = form.save()
+            print(student.room_id)
             student = request.user.student
             return render(request, 'profile.html', {'student': student})
     else:
@@ -156,20 +164,26 @@ def select(request):
         student_room_type = request.user.student.course.room_type
         hostel = Hostel.objects.filter(
             gender=student_gender, course=student_course)
+        print(student_gender, student_course, student_room_type)
+        print(hostel)
         x = Room.objects.none()
         if student_room_type == 'B':
+            print(student_room_type)
             for i in range(len(hostel)):
                 h_id = hostel[i].id
                 a = Room.objects.filter(
-                    hostel_id=h_id, room_type=['S', 'D'], vacant=True)
+                    hostel_id=h_id, room_type=['S','D'], vacant=True)
+
                 x = x | a
-        else :
+        else:
             for i in range(len(hostel)):
                 h_id = hostel[i].id
                 a = Room.objects.filter(
                     hostel_id=h_id, room_type=student_room_type, vacant=True)
+                print(a)
                 x = x | a
         form.fields["room"].queryset = x
+        print('x',x)
         return render(request, 'select_room.html', {'form': form})
 
 
@@ -235,7 +249,7 @@ def logout_view(request):
 
 def BH5_Floor1(request):
     room_list = Room.objects.order_by('name')
-    room_dict = {'rooms':room_list}
+    room_dict = {'rooms': room_list}
     return render(request, 'BH5_Floor1.html', context=room_dict)
 
 
@@ -285,4 +299,5 @@ def hostel_detail_view(request, hostel_name):
         'rooms': Room.objects.filter(
             hostel=this_hostel)}
     return render(request, 'hostels.html', context)
+
 

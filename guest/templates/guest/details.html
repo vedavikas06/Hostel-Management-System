@@ -1,27 +1,58 @@
 {% extends 'guest/base.html' %}
+{% block design %}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+<!--tr:nth-child(even) {-->
+    <!--background-color: #dddddd;-->
+<!--}-->
+
+{% endblock design %}
 
 {% block content %}
 
 
-<div class = "info">
 
-<h1> Available No of rooms are {{ count }} </h1>
 
-<div class = 'avail' >
+<h1 style="color:Tomato;" > Available No of rooms ..  {{ count }} </h1>
+<table>
+
+
+     <tr>
+        <th> Room No.. </th>
+        <th> Price</th>
+     </tr>
+
+
     {% for room in rooms %}
 
-    <h3> Room no - {{room.no}} </h3> <br>
-    <h3> Price - {{room.price}}</h3>
-    <br> <br>
+     <tr>
+        <td> {{room.no}} </td>
+        <td> {{room.price}} </td>
+    </tr>
 
     {% endfor %}
-    </div>
 
-</div>
+
+</table>
+
+<br>
+<br>
 
 {% if count %}
-<a href="{% url 'guest:select' res.booking_id %}"> Select a Room </a>
-{% else %}
+<div class="center" style = "text-align: center;" >
+<a class="btn btn-primary" href="{% url 'guest:select' res.booking_id %}"> Select a Room </a>
+</div>
+    {% else %}
 <h1>No Rooms Available</h1>
 {% endif %}
 
@@ -41,6 +72,9 @@
 {% block more_links %}
     <!--<a href="{% url 'login' %}">Login</a>-->
     <!--<a href="{% url 'reg_form' %}">Register</a>-->
+    <a href="{% url 'guest:cancel' res.booking_id %}">Cancel Booking</a>
+   <a href="{% url 'guest:logout' %}">Logout</a>
+
 {% endblock more_links %}
 
 

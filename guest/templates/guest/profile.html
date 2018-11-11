@@ -56,6 +56,14 @@
             </div>
             <div class="row">
                 <div class="cell">
+                    Price (&#x20b9;)
+                </div>
+                <div class="cell">
+                     {{res.room.price}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell">
                     CheckIn
                 </div>
                 <div class="cell">
@@ -78,9 +86,11 @@
 
             <a class="btn btn-danger" href="{% url 'guest:cancel' res.booking_id %}"> Cancel Booking </a>
 
+            <a class="btn btn-success" href="{% url 'guest:pdf' res.booking_id %}"> Generate PDF </a>
+
 {% endblock content %}
 
 
 {% block more_links %}
-
+   <a href="{% url 'guest:logout' %}">Logout</a>
 {% endblock more_links %}

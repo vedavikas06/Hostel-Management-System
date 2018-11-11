@@ -1,10 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'guest/base.html' %}
+
+   {% block design %}
+
+table.test td.test {
+    background-color: lime;
+    margin: 12px 12px 12px 12px;
+    padding: 12px 12px 12px 12px;
+}
+table.test {
+    border-collapse: separate;
+    border-spacing: 10px;
+    *border-collapse: expression('separate', cellSpacing = '10px');
+}
+
+    {% endblock design %}
+{% block content %}
+
+{% if bookings.count == 0 %}
+<h3> ALL Successful Bookings of {{guest.first_name}}  {{guest.last_name}}</h3>
+
+{% else %}
+<table class = 'test'>
+
+
+
+            <tr>
+                <th>
+                   ID
+                </th>
+                <th>
+                    Room No
+                </th>
+                <th>
+                    CheckIn
+                </th>
+                <th>
+                    CheckOut
+                </th>
+            </tr>
+        {% for booking in bookings %}
+            <tr>
+                <td class="test">
+                   {{booking.booking_id}}
+                </td>
+                <td class="test">
+                    {{booking.room.no}}
+                </td>
+                <td class="test">
+                    {{booking.checkIn}}
+                </td>
+                <td class="test">
+                    {{booking.checkOut}}
+                </td>
+
+
+
+               <td> <a class="btn btn-danger" href="{% url 'guest:cancel' booking.booking_id %}"> Cancel Booking </a>
+               </td>
+            </tr>
+        {% endfor %}
+
+
+</table>
+
+<br>
+{% endif %}
+
+{% endblock content %}
+
+
+
+
+{% block more_links %}
+    <a href="{% url 'guest:home' %}"> Book A Room! </a>
+    <a href="{% url 'guest:logout' %}">Logout</a>
+{% endblock more_links %}
+

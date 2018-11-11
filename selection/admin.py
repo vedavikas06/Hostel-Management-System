@@ -33,9 +33,13 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ['is_warden']
+    list_display = ['is_warden','username']
 
 
 @admin.register(Warden)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['name', 'username']
+
+    def username(self, obj):
+        return obj.user.username
+

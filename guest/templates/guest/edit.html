@@ -3,14 +3,26 @@
 {% block content %}
 
 
-<div class = "guest">
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" class = "btn btn-primary" value="Submit">
-</form>
+<!--<div class = "guest">-->
+<!--<form action="" method="post">-->
+    <!--{% csrf_token %}-->
+    <!--{{ form.as_p }}-->
+    <!--<input type="submit" class = "btn btn-primary" value="Submit">-->
+<!--</form>-->
 
-</div>
+<!--</div>-->
+
+<div class="wrap">
+    <form action="" method="post">
+        {% csrf_token %}
+      <div class="fields"> First Name <br><br> {{ form.first_name }}</div>
+      <div class="fields"> Last Name <br><br> {{ form.last_name }}</div>
+      <div class="fields"> Phone Number <br><br> {{ form.phone }}</div>
+      <div class="fields"> E-mail <br><br> {{ form.email }}</div>
+      <div class="fields"> City  <br><br> {{ form.city }}</div>
+      <input type="submit" class = "btn btn-primary" value="Submit">
+    </form>
+  </div>
 
 {% endblock content %}
 
@@ -20,4 +32,6 @@
 {% block more_links %}
     <!--<a href="{% url 'login' %}">Login</a>-->
     <!--<a href="{% url 'reg_form' %}">Register</a>-->
+        <a href="{% url 'guest:cancel' res %}">Cancel Booking</a>
+       <a href="{% url 'guest:logout' %}">Logout</a>
 {% endblock more_links %}

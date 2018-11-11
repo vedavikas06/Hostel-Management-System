@@ -3,11 +3,11 @@
 {% block content %}
 
 
-<div class = "book">
+<div class="wrap">
 <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" class = "btn btn-primary" value="Submit">
+    <input type="submit" class = "btn btn-primary" value="CHECK AVAILABILITY">
 </form>
 
 </div>
@@ -18,8 +18,9 @@
 
 
 {% block more_links %}
-    <!--<a href="{% url 'login' %}">Login</a>-->
-    <!--<a href="{% url 'reg_form' %}">Register</a>-->
+    <a href="{% url 'guest:bookings' %}">My Bookings</a>
+    <a href="{% url 'guest:logout' %}">Logout</a>
+
 {% endblock more_links %}
 
 
