@@ -16,9 +16,10 @@ table.test {
     {% endblock design %}
 {% block content %}
 
-{% if bookings.count == 0 %}
-<h3> ALL Successful Bookings of {{guest.first_name}}  {{guest.last_name}}</h3>
 
+<h3> ALL Successful Bookings of {{guest.first_name}}  {{guest.last_name}}</h3>
+{% if bookings.count == 0 %}
+<center><h4 > No Bookings Done!!</h4></center>
 {% else %}
 <table class = 'test'>
 
