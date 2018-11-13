@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from .forms import UserForm, RegistrationForm, LoginForm, SelectionForm, DuesForm, NoDuesForm
+from .forms import *
 from django.http import HttpResponse, Http404
-from selection.models import Student, Room, Hostel
+from selection.models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
@@ -69,7 +69,8 @@ def user_login(request):
                 if user.is_active:
                     login(request, user)
                     student = request.user.student
-                    return render(request, 'profile.html', {'student': student})
+                    leaves = Leave.objects.filter(student=request.user.student)
+                    return render(request, 'profile.html', {'student': student, 'leaves': leaves})
                 else:
                     return HttpResponse('Disabled account')
             else:
@@ -112,7 +113,11 @@ def edit(request):
         if form.is_valid():
             form.save()
             student = request.user.student
-            return render(request, 'profile.html', {'student': student})
+            leaves = Leave.objects.filter(student=request.user.student)
+            return render(request, 'profile.html', {'student': student, 'leaves': leaves})
+        else:
+            form = RegistrationForm()
+            return render(request, 'edit.html', {'form': form})
     else:
         form = RegistrationForm(instance=request.user.student)
         return render(request, 'edit.html', {'form': form})
@@ -154,7 +159,8 @@ def select(request):
             student  = form.save()
             print(student.room_id)
             student = request.user.student
-            return render(request, 'profile.html', {'student': student})
+            leaves = Leave.objects.filter(student=request.user.student)
+            return render(request, 'profile.html', {'student': student, 'leaves': leaves})
     else:
         if not request.user.student.no_dues:
             return HttpResponse('You have dues. Please contact your Hostel Caretaker or Warden')
@@ -301,3 +307,51 @@ def hostel_detail_view(request, hostel_name):
     return render(request, 'hostels.html', context)
 
 
+def user_leave(request):
+    if request.method == 'POST':
+        form = LeaveForm(request.POST)
+        if form.is_valid() & request.user.student.room_allotted:
+            leave_form = form.save(commit=False)
+            student = request.user.student
+            leave_form.student = student
+            leave_form.save()
+            leaves = Leave.objects.filter(student = request.user.student)
+            return render(request, 'profile.html', {'student': student,'leaves': leaves})
+
+        elif not request.user.student.room_allotted:
+            return HttpResponse('<h3>First Select a Room </h3> <br> <br> <a href = \'select\'> SELECT A ROOM </a> ')
+
+        else:
+            form = LeaveForm()
+            return render(request, 'leave_form.html', {'form': form})
+    else:
+        form = LeaveForm()
+        return render(request, 'leave_form.html', {'form': form})
+
+
+def leave_admin(request):
+    user = request.user
+    if user is not None:
+        if not user.is_warden:
+            return HttpResponse('Invalid Login')
+        else:
+            warden_hostel = user.warden.hostel
+            stud = Student.objects.filter(room__hostel = warden_hostel)
+            leaves = Leave.objects.filter(student__in=stud).filter(accept=False,reject=False)
+            return render(request, 'pending.html', {'leaves': leaves})
+    else:
+        return HttpResponse('Invalid Login')
+
+
+def leave_confirm(request,lv_id):
+    lv = Leave.objects.get(id = lv_id)
+    lv.accept = True
+    lv.save()
+    return redirect('../../leave')
+
+
+def leave_reject(request, lv_id):
+    lv = Leave.objects.get(id=lv_id)
+    lv.reject = True
+    lv.save()
+    return redirect('../../leave')

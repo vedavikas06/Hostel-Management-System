@@ -1,8 +1,10 @@
 from django.contrib.auth.forms import UserCreationForm
-from .models import Student, User, Course
+from .models import *
 from django import forms
 from django.core.exceptions import ValidationError
+import datetime
 
+YEARS= [x for x in range(2018,2020)]
 
 class UserForm(UserCreationForm):
     password1 = forms.CharField(min_length=8, max_length=30, widget=forms.PasswordInput(render_value=False))
@@ -50,3 +52,18 @@ class DuesForm(forms.Form):
 
 class NoDuesForm(forms.Form):
     choice = forms.ModelChoiceField(queryset=Student.objects.all().filter(no_dues=False))
+
+
+class LeaveForm(forms.ModelForm):
+    start_date = forms.DateField(initial=datetime.date.today, widget=forms.SelectDateWidget(years=YEARS))
+    end_date = forms.DateField(initial=datetime.date.today, widget=forms.SelectDateWidget(years=YEARS))
+    reason = forms.CharField(max_length=100, help_text='100 characters max.',
+                             widget=forms.TextInput(attrs={'placeholder': 'Enter Reason here'}))
+
+    class Meta:
+        model = Leave
+        fields = [
+            'start_date',
+            'end_date',
+            'reason']
+

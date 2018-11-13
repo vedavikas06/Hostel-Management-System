@@ -13,6 +13,9 @@ urlpatterns = [
     path('reg_form/', views.register, name='reg_form'),
     path('login/', views.user_login, name='login'),
     path('warden_login/', views.warden_login, name='warden_login'),
+    path('warden_login/leave', views.leave_admin, name='leave_admin'),
+    path('warden_login/leave_confirm/<int:lv_id>/', views.leave_confirm, name='leave_confirm'),
+    path('warden_login/leave_reject/<int:lv_id>/', views.leave_reject, name='leave_reject'),
     path('warden_dues/', views.warden_dues, name='warden_dues'),
     path('warden_add_due/', views.warden_add_due, name='warden_add_due'),
     path('warden_remove_due/', views.warden_remove_due, name='warden_remove_due'),
@@ -28,4 +31,5 @@ urlpatterns = [
     path('BH5_Floor4/', views.BH5_Floor4, name='BH5_Floor4'),
     path('BH5_Floor5/', views.BH5_Floor5, name='BH5_Floor5'),
     path('BH5_Floor6/', views.BH5_Floor6, name='BH5_Floor6'),
+    path('login/leave', views.user_leave, name='leave_status'),
 ]

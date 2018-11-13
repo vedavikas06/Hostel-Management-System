@@ -50,7 +50,7 @@
                     Room
                 </div>
                 <div class="cell">
-                    {% if student.room_allotted %} {{ student.room }} in {{ student.room.hostel }}
+                    {% if student.room_allotted %} {{ student.room }}
                     {% else %} Not Allotted
                     {% endif %}
                 </div>
@@ -71,6 +71,55 @@
         </a>
     </div>
 
+    <h2 style = "text-align: center; color: blue ;" > Previous Leave Requests</h2>
+    {% if leaves %}
+    <div class="wrapper">
+        <div class="table">
+
+            <div class="row header">
+                <div class="cell">
+                    Start Date
+                </div>
+                <div class="cell">
+                    End Date
+                </div>
+                <div class="cell">
+                    Reason
+                </div>
+                <div class="cell">
+                    Accepted/Rejected
+                </div>
+
+
+            </div>
+            {% for leave in leaves %}
+                <div class="row">
+                    <div class="cell">
+                        {{leave.start_date}}
+                    </div>
+                    <div class="cell">
+                        {{leave.end_date}}
+                    </div>
+                    <div class="cell">
+                        {{leave.reason}}
+                    </div>
+
+                    <div class="cell">
+                        {% if leave.accept %} &#10004; {% elif leave.reject %} &#10008; {% else %} - {% endif %}
+                    </div>
+
+
+                 </div>
+            {% endfor %}
+
+
+
+        </div>
+
+    </div>
+    {% endif %}
+
+
 {% endblock content %}
 
 
@@ -80,6 +129,9 @@
         </a>
         <a href="{% url 'select' %}">
             Select a Room
+        </a>
+        <a href="{% url 'leave_status' %}">
+            Apply Leave
         </a>
         <a href="{% url 'logout' %}">
             Logout

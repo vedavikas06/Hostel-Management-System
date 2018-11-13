@@ -15,6 +15,9 @@ class ReservationAdmin(admin.ModelAdmin):
 
 @admin.register(Guest)
 class GuestAdmin(admin.ModelAdmin):
-    list_display = ['guest_id', 'first_name', 'last_name']
+    list_display = ['guest_id', 'first_name', 'last_name','username']
+
+    def username(self, obj):
+        return obj.user.username
 
 

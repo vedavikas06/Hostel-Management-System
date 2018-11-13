@@ -138,18 +138,38 @@ def home(request):
 @login_required
 def edit(request, res_id):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST,instance=request.user.guest)
+
+
+        try:
+            form = RegistrationForm(request.POST,instance=request.user.guest)
+        except Guest.DoesNotExist:
+            form = RegistrationForm(request.POST)
+
+
+        #form = RegistrationForm(request.POST,instance=request.user.guest)
         res = Reservation.objects.get(pk=res_id)
         if form.is_valid():
             if (not res.room_alloted) and (request.session['room']):
-                form.save(commit=True)
 
                 room = Room.objects.get(no=request.session['room'])
                 res.room = room
                 del request.session['room']
 
-                res.guest = request.user.guest
-                res.save()
+
+                try:
+                    res.guest = request.user.guest
+                    res.save()
+                    form.save(commit=True)
+                except Guest.DoesNotExist:
+                    guest = form.save(commit=False)
+                    guest.user = request.user
+                    guest.save()
+                    res.guest = guest
+                    
+                    res.save()
+
+                # res.guest = request.user.guest
+                # res.save()
 
                 return render(request, 'guest/profile.html', {'res': res})
 
@@ -161,7 +181,13 @@ def edit(request, res_id):
                                 " Book Again! </a> ")
 
     else:
-        form = RegistrationForm(instance=request.user.guest)
+
+        try:
+            form = RegistrationForm(instance=request.user.guest)
+        except Guest.DoesNotExist:
+            form = RegistrationForm(request.POST)
+
+        # form = RegistrationForm(instance=request.user.guest)
         return render(request, 'guest/edit.html', {'form': form,'res':res_id})
 
 

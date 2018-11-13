@@ -51,7 +51,7 @@ class Room(models.Model):
     hostel = models.ForeignKey('Hostel', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return '%s %s' %(self.name, self.hostel)
 
 
 class Hostel(models.Model):
@@ -98,3 +98,11 @@ class Warden(models.Model):
             self.user.save()
         super(Warden, self).save(*args, **kwargs)
 
+
+class Leave(models.Model):
+    student = models.ForeignKey('Student', on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    reason = models.CharField(max_length=100,blank = False)
+    accept = models.BooleanField(default=False)
+    reject = models.BooleanField(default=False)

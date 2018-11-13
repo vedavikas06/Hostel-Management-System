@@ -1,0 +1,27 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="wrap">
+    <form action="" method="post">
+        {% csrf_token %}
+      <div class="fields"> Leave Start date <br><br> {{ form.start_date }}</div>
+      <div class="fields"> Leave End Date <br><br> {{ form.end_date }}</div>
+      <div class="fields"> Reason <br><br> {{ form.reason }}</div>
+      <input class="button-custom" type="submit" value="Apply Leave">
+    </form>
+  </div>
+{% endblock content %}
+
+
+{% block more_links %}
+    <a href="{% url 'edit' %}">
+            Update Details
+        </a>
+        <a href="{% url 'select' %}">
+            Select a Room
+        </a>
+        <a href="{% url 'logout' %}">
+            Logout
+        </a>
+{% endblock more_links %}
