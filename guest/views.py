@@ -165,7 +165,7 @@ def edit(request, res_id):
                     guest.user = request.user
                     guest.save()
                     res.guest = guest
-                    
+
                     res.save()
 
                 # res.guest = request.user.guest
@@ -241,7 +241,7 @@ def confirm(request,res_id):
 
     res.room_alloted = True
     res.save()
-    return HttpResponse("<h1> Booking Successful!! </h1> <br> <a href=\"../../home\"> Book Again! </a>")
+    return render(request,'guest/confirm.html',{"res_id":res_id} )
 
 @login_required
 def generate_pdf(request,res_id):

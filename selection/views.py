@@ -89,11 +89,14 @@ def warden_login(request):
                 request,
                 username=cd['username'],
                 password=cd['password'])
+            print(cd['username'],cd['password'])
+            print(user)
             if user is not None:
                 if not user.is_warden:
                     return HttpResponse('Invalid Login')
                 elif user.is_active:
                     login(request, user)
+                    print('True')
                     room_list = request.user.warden.hostel.room_set.all()
                     context = {'rooms': room_list}
                     return render(request, 'warden.html', context)
@@ -193,7 +196,7 @@ def select(request):
         return render(request, 'select_room.html', {'form': form})
 
 
-@login_required
+# @login_required
 def warden_dues(request):
     user = request.user
     if user is not None:
@@ -206,7 +209,7 @@ def warden_dues(request):
         return HttpResponse('Invalid Login')
 
 
-@login_required
+# @login_required
 def warden_add_due(request):
     user = request.user
     if user is not None:
@@ -227,7 +230,7 @@ def warden_add_due(request):
         return HttpResponse('Invalid Login')
 
 
-@login_required
+# @login_required
 def warden_remove_due(request):
     user = request.user
     if user is not None:

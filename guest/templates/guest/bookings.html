@@ -2,6 +2,13 @@
 
    {% block design %}
 
+.s_book{
+
+    padding: 30px;
+
+
+}
+
 table.test td.test {
     background-color: lime;
     margin: 12px 12px 12px 12px;
@@ -17,54 +24,102 @@ table.test {
 {% block content %}
 
 
-<h3> ALL Successful Bookings of {{guest.first_name}}  {{guest.last_name}}</h3>
+
 {% if bookings.count == 0 %}
-<center><h4 > No Bookings Done!!</h4></center>
+<center><h4 class = 's_book'> No Bookings Done!!</h4></center>
 {% else %}
-<table class = 'test'>
+<center> <h3 class = 's_book'> ALL Successful Bookings of {{guest.first_name}}  {{guest.last_name}}</h3></center>
+<!--<table class = 'test'>-->
 
 
 
-            <tr>
-                <th>
-                   ID
-                </th>
-                <th>
+            <!--<tr>-->
+                <!--<th>-->
+                   <!--ID-->
+                <!--</th>-->
+                <!--<th>-->
+                    <!--Room No-->
+                <!--</th>-->
+                <!--<th>-->
+                    <!--CheckIn-->
+                <!--</th>-->
+                <!--<th>-->
+                    <!--CheckOut-->
+                <!--</th>-->
+            <!--</tr>-->
+        <!--{% for booking in bookings %}-->
+            <!--<tr>-->
+                <!--<td class="test">-->
+                   <!--{{booking.booking_id}}-->
+                <!--</td>-->
+                <!--<td class="test">-->
+                    <!--{{booking.room.no}}-->
+                <!--</td>-->
+                <!--<td class="test">-->
+                    <!--{{booking.checkIn}}-->
+                <!--</td>-->
+                <!--<td class="test">-->
+                    <!--{{booking.checkOut}}-->
+                <!--</td>-->
+
+
+
+               <!--<td> <a class="btn btn-danger" href="{% url 'guest:cancel' booking.booking_id %}"> Cancel Booking </a>-->
+               <!--</td>-->
+            <!--</tr>-->
+        <!--{% endfor %}-->
+
+
+<!--</table>-->
+
+<!--<br>-->
+
+
+ <div class="wrapper">
+
+        <div class="table">
+
+            <div class="row header">
+                <div class="cell">
+                    ID
+                </div>
+                <div class="cell">
                     Room No
-                </th>
-                <th>
+                </div>
+                <div class="cell">
                     CheckIn
-                </th>
-                <th>
+                </div>
+                <div class="cell">
                     CheckOut
-                </th>
-            </tr>
-        {% for booking in bookings %}
-            <tr>
-                <td class="test">
-                   {{booking.booking_id}}
-                </td>
-                <td class="test">
-                    {{booking.room.no}}
-                </td>
-                <td class="test">
-                    {{booking.checkIn}}
-                </td>
-                <td class="test">
-                    {{booking.checkOut}}
-                </td>
+                </div>
+                <div class="cell">
+                    Cancel
+                </div>
+            </div>
+            {% for booking in bookings %}
+                <div class="row">
+                    <div class="cell" data-title="Number">
+                        {{booking.booking_id}}
+                    </div>
+                    <div class="cell" data-title="Number">
+                        {{booking.room.no}}
+                    </div>
+                    <div class="cell" data-title="Date">
+                         {{booking.checkIn}}
+                    </div>
+                    <div class="cell" data-title="Date">
+                        {{booking.checkOut}}
+                    </div>
+                    <div class="cell">
+                   <a class="btn btn-danger" href="{% url 'guest:cancel' booking.booking_id %}"> Cancel Booking </a>
+                    </div>
 
+                </div>
+            {% endfor %}
+        </div>
 
-
-               <td> <a class="btn btn-danger" href="{% url 'guest:cancel' booking.booking_id %}"> Cancel Booking </a>
-               </td>
-            </tr>
-        {% endfor %}
-
-
-</table>
-
-<br>
+    </div>
+ <br>
 {% endif %}
 
 {% endblock content %}
