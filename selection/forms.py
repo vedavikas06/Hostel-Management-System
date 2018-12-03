@@ -29,6 +29,7 @@ class LoginForm(forms.Form):
 
 
 class RegistrationForm(forms.ModelForm):
+
     class Meta:
         model = Student
         fields = [
@@ -54,16 +55,26 @@ class NoDuesForm(forms.Form):
     choice = forms.ModelChoiceField(queryset=Student.objects.all().filter(no_dues=False))
 
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
 class LeaveForm(forms.ModelForm):
     start_date = forms.DateField(initial=datetime.date.today, widget=forms.SelectDateWidget(years=YEARS))
     end_date = forms.DateField(initial=datetime.date.today, widget=forms.SelectDateWidget(years=YEARS))
     reason = forms.CharField(max_length=100, help_text='100 characters max.',
                              widget=forms.TextInput(attrs={'placeholder': 'Enter Reason here'}))
-
     class Meta:
         model = Leave
         fields = [
             'start_date',
             'end_date',
             'reason']
+class RepairForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['repair']
 
+
+class RebateForm(forms.Form):
+    rebate = forms.DateField(initial=datetime.date(year=2018, month=1, day=1), widget=forms.SelectDateWidget(years=YEARS))

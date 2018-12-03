@@ -145,8 +145,7 @@ def edit(request, res_id):
         except Guest.DoesNotExist:
             form = RegistrationForm(request.POST)
 
-
-        #form = RegistrationForm(request.POST,instance=request.user.guest)
+        # form = RegistrationForm(request.POST,instance=request.user.guest)
         res = Reservation.objects.get(pk=res_id)
         if form.is_valid():
             if (not res.room_alloted) and (request.session['room']):

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2 style = "text-align: center; color: Red ;" > Mess Rebate List for  <form action="" method="post">
+        {% csrf_token %}
+
+      <!--<div class="fields"> Student Name <br> {{ form.student_name }}</div>-->
+      <!--<div class="fields"> Father's Name <br> {{ form.father_name }}</div>-->
+      <!--<div class="fields"> Enrollment Number <br> {{ form.enrollment_no }}</div>-->
+      <!--<div class="fields"> Course {{ form.course }}</div>-->
+      <!--<div class="fields"> Date of birth (yyyy-mm-dd) <br> {{ form.dob }}</div>-->
+      <!--<div class="fields"> Gender {{ form.gender }}</div>-->
+      <!--<input class="button-custom" type="submit" value="DONE">-->
+        {{ form.rebate }}
+
+        <br>
+        <input class="button-custom" type="submit" value="DONE">
+    </form>
+
+    </h2>
+
+
+
+{% if student %}
+    <div class="wrapper">
+        <div class="table">
+
+            <div class="row header">
+                <div class="cell">
+                    Student Name
+                </div>
+                <div class="cell">
+                    Enrollment No
+                </div>
+                <div class="cell">
+                    Course
+                </div>
+                <div class="cell">
+                    Rebate Days
+                </div>
+
+
+            </div>
+            {% for stud in student %}
+                <div class="row">
+                    <div class="cell">
+                        {{stud.student_name}}
+                    </div>
+                    <div class="cell">
+                        {{stud.enrollment_no}}
+                    </div>
+                     <div class="cell">
+                        {{stud.course.code}}
+                    </div>
+
+                    <div class="cell">
+                        {% for key,value in count_rebate.items %}
+                        {% if key == stud.enrollment_no %}
+                        {{ value }}
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+
+
+                 </div>
+            {% endfor %}
+
+
+
+        </div>
+
+    </div>
+{% endif %}
+
+{% endblock content %}
+
+
+{% block more_links %}
+    <a href="{% url 'warden_profile' %}">
+        Profile
+    </a>
+    <a href="{% url 'leave_admin' %}">
+        Leave requests
+    </a>
+    <a href="{% url 'empty_rooms' %}">
+        Empty Rooms
+    </a>
+
+    <a href="{% url 'present_leaves' %}">
+        Present Leave
+    </a>
+    <a href="{% url 'logout' %}">
+        Logout
+    </a>
+{% endblock more_links %}

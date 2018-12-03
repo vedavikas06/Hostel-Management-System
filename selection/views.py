@@ -4,10 +4,15 @@ from django.http import HttpResponse, Http404
 from selection.models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+import datetime,calendar
 
 
 def home(request):
     return render(request, 'home.html')
+
+
+def start(request):
+    return render(request, 'start.html')
 
 
 def register(request):
@@ -68,9 +73,10 @@ def user_login(request):
                     return HttpResponse('Invalid Login')
                 if user.is_active:
                     login(request, user)
-                    student = request.user.student
-                    leaves = Leave.objects.filter(student=request.user.student)
-                    return render(request, 'profile.html', {'student': student, 'leaves': leaves})
+                    # student = request.user.student
+                    # leaves = Leave.objects.filter(student=request.user.student)
+                    # return render(request, 'profile.html', {'student': student, 'leaves': leaves})
+                    return redirect('../student_profile/')
                 else:
                     return HttpResponse('Disabled account')
             else:
@@ -96,10 +102,11 @@ def warden_login(request):
                     return HttpResponse('Invalid Login')
                 elif user.is_active:
                     login(request, user)
-                    print('True')
-                    room_list = request.user.warden.hostel.room_set.all()
-                    context = {'rooms': room_list}
-                    return render(request, 'warden.html', context)
+                    # print('True')
+                    # room_list = request.user.warden.hostel.room_set.all()
+                    # context = {'rooms': room_list}
+                    # return render(request, 'warden.html', context)
+                    return redirect('../warden_profile/')
                 else:
                     return HttpResponse('Disabled account')
             else:
@@ -107,6 +114,40 @@ def warden_login(request):
     else:
         form = LoginForm()
         return render(request, 'login.html', {'form': form})
+
+
+def warden_profile(request):
+    user = request.user
+    if user is not None:
+        if not user.is_warden:
+            return HttpResponse('Invalid Login')
+        elif user.is_active:
+            login(request, user)
+            print('True')
+            room_list = request.user.warden.hostel.room_set.all().order_by('no')
+            context = {'rooms': room_list}
+            return render(request, 'warden.html', context)
+        else:
+            return HttpResponse('Disabled account')
+    else:
+        return HttpResponse('Invalid Login')
+
+
+def student_profile(request):
+    user = request.user
+    if user is not None:
+        if user.is_warden:
+            return HttpResponse('Invalid Login')
+        if user.is_active:
+            login(request, user)
+            student = request.user.student
+            leaves = Leave.objects.filter(student=request.user.student)
+            return render(request, 'profile.html', {'student': student, 'leaves': leaves})
+        else:
+            return HttpResponse('Disabled account')
+    else:
+        return HttpResponse('Invalid Login')
+
 
 
 @login_required
@@ -170,30 +211,66 @@ def select(request):
         form = SelectionForm(instance=request.user.student)
         student_gender = request.user.student.gender
         student_course = request.user.student.course
+        if student_course is None:
+            return HttpResponse('No Course Selected <br> '
+                                '<h3><a href = \'..\edit\' style = "text-align: center; color: Red ;"> Update Profile </a> </h3> ')
         student_room_type = request.user.student.course.room_type
         hostel = Hostel.objects.filter(
-            gender=student_gender, course=student_course)
+            gender=student_gender, course=student_course).order_by('name')
         print(student_gender, student_course, student_room_type)
         print(hostel)
         x = Room.objects.none()
         if student_room_type == 'B':
-            print(student_room_type)
-            for i in range(len(hostel)):
-                h_id = hostel[i].id
-                a = Room.objects.filter(
-                    hostel_id=h_id, room_type=['S','D'], vacant=True)
+            # print(student_room_type)
+            # for i in range(len(hostel)):
+            #     h_id = hostel[i].id
+            x = Room.objects.filter(
+                hostel__id=hostel, room_type=['S','D'], vacant=True).order_by('no')
 
-                x = x | a
+            # x = x | a
         else:
-            for i in range(len(hostel)):
-                h_id = hostel[i].id
-                a = Room.objects.filter(
-                    hostel_id=h_id, room_type=student_room_type, vacant=True)
-                print(a)
-                x = x | a
+            # for i in range(len(hostel)):
+            #     h_id = hostel[i].id
+            x = Room.objects.filter(
+                hostel_id__in=hostel, room_type=student_room_type, vacant=True).order_by('hostel_id','no')
+            print(x)
+            # x = x | a
         form.fields["room"].queryset = x
         print('x',x)
         return render(request, 'select_room.html', {'form': form})
+
+
+def repair(request):
+
+    if request.method == 'POST':
+        form = RepairForm(request.POST)
+        if form.is_valid() & request.user.student.room_allotted:
+
+            rep = form.cleaned_data['repair']
+            room = request.user.student.room
+            room.repair = rep
+            room.save()
+            return HttpResponse('<h3>Complaint Registered</h3> <br> <a href = \'../../student_profile\''
+                                ' style = "text-align: center; color: Red ;"> Go Back to Profile </a>')
+        elif not request.user.student.room_allotted:
+            return HttpResponse('<h3>First Select a Room </h3> <br> <a href = \'../select\''
+                                ' style = "text-align: center; color: Red ;"> SELECT ROOM </a> ')
+
+        else:
+            form = RepairForm()
+            room = request.user.student.room
+            return render(request, 'repair_form.html', {'form': form, 'room': room})
+    else:
+        if not request.user.student.room_allotted:
+            return HttpResponse('<h3>First Select a Room </h3> <br> <a href = \'../select\''
+                                ' style = "text-align: center; color: Red ;"> SELECT ROOM </a> ')
+        else:
+            form = RepairForm()
+            room = request.user.student.room
+            return render(request, 'repair_form.html', {'form': form,'room': room})
+
+
+
 
 
 # @login_required
@@ -251,78 +328,119 @@ def warden_remove_due(request):
         return HttpResponse('Invalid Login')
 
 
-def logout_view(request):
-    logout(request)
-    return redirect('/')
+def empty_rooms(request):
+    user = request.user
+    if user is not None:
+        if not user.is_warden:
+            return HttpResponse('Invalid Login')
+        elif user.is_active:
+            room_list = request.user.warden.hostel.room_set.filter(vacant=True).order_by('no')
+            context = {'rooms': room_list}
+            return render(request, 'empty_rooms.html', context)
+        else:
+            return HttpResponse('Disabled account')
+    else:
+        return HttpResponse('Invalid Login')
 
 
-def BH5_Floor1(request):
-    room_list = Room.objects.order_by('name')
-    room_dict = {'rooms': room_list}
-    return render(request, 'BH5_Floor1.html', context=room_dict)
+def present_leaves(request):
+    user = request.user
+    if user is not None:
+        if not user.is_warden:
+            return HttpResponse('Invalid Login')
+        elif user.is_active:
+            warden_hostel = user.warden.hostel
+            stud = Student.objects.filter(room__hostel=warden_hostel)
+            leaves = Leave.objects.filter(student__in=stud,accept=True,start_date__lte=datetime.date.today(), end_date__gte=datetime.date.today()).values_list('student', flat=True).distinct()
+            stud = Student.objects.filter(id__in= leaves)
+            # print(leaves.query)
+            print(stud.query)
+            # print(stud)
+            return render(request, 'present_leaves.html', {'student': stud})
+        else:
+            return HttpResponse('Disabled account')
+    else:
+        return HttpResponse('Invalid Login')
 
 
-def BH5_Floor2(request):
-    room_list = Room.objects.order_by('name')
-    room_dict = {'rooms':room_list}
-    return render(request, 'BH5_Floor2.html', context=room_dict)
+def mess_rebate(request):
+    if request.method == 'POST':
+        user = request.user
+        form = RebateForm(request.POST)
+        if user is not None:
+            if not user.is_warden:
+                return HttpResponse('Invalid Login')
+            elif user.is_active and form.is_valid():
 
+                reb = form.cleaned_data['rebate']
+                print(reb)
+                warden_hostel = user.warden.hostel
+                stud = Student.objects.filter(room__hostel=warden_hostel).order_by('enrollment_no')
+                leaves = Leave.objects.filter(student__in=stud, accept=True).order_by('student__enrollment_no')
+                stud_rebate_list = {}
+                this_month = reb.month
+                first_day = datetime.date(reb.year, this_month, 1)
 
-def BH5_Floor3(request):
-    room_list = Room.objects.order_by('name')
-    room_dict = {'rooms':room_list}
-    return render(request, 'BH5_Floor3.html', context=room_dict)
+                for stud_id in stud:
+                    cnt = 0
+                    for leave in leaves:
+                        if leave.student.id == stud_id.id and (leave.start_date.month == this_month or leave.end_date.month == this_month) and (reb-leave.end_date).days > 0 :
+                            # if  (reb-leave.end_date).days >= 0:
 
+                            dayz = abs(leave.end_date-first_day).days - abs(leave.start_date-first_day).days + 1
+                            #print(leave.start_date, first_day, abs(leave.start_date - first_day).days)
+                            print(leave.end_date,first_day,abs(leave.end_date-first_day).days,stud_id.student_name)
+                            cnt = cnt+dayz
+                    stud_rebate_list[stud_id.enrollment_no] = cnt
+                print(stud_rebate_list)
+                month_name = calendar.month_name[this_month]
+                #stud = Student.objects.filter(id__in=leaves)
+                # this_month = datetime.datetime.now().month
+                # HourEntries.objects.filter(date__month=this_month).aggregate(Sum("quantity"))
+                return render(request, 'mess_rebate.html',
+                              {'form': form, 'count_rebate': stud_rebate_list, 'student': stud})
+            else:
+                return HttpResponse('Disabled account')
+        else:
+            return HttpResponse('Invalid Login')
+    else:
+        form = RebateForm()
+        stud_rebate_list={}
+        stud=Student.objects.none()
 
-def BH5_Floor4(request):
-    room_list = Room.objects.order_by('name')
-    room_dict = {'rooms':room_list}
-    return render(request, 'BH5_Floor4.html', context=room_dict)
+        return render(request, 'mess_rebate.html', {'form': form,'count_rebate': stud_rebate_list,'student': stud})
 
-
-def BH5_Floor5(request):
-    room_list = Room.objects.order_by('name')
-    room_dict = {'rooms':room_list}
-    return render(request, 'BH5_Floor5.html',context=room_dict)
-
-
-def BH5_Floor6(request):
-    room_list = Room.objects.order_by('name')
-    room_dict = {'rooms':room_list}
-    return render(request, 'BH5_Floor6.html', context=room_dict)
-
-
-def BH5_GroundFloor(request):
-    room_list = Room.objects.order_by('name')
-    room_dict = {'rooms':room_list}
-    return render(request, 'BH5_GroundFloor.html', context=room_dict)
-
-
-def hostel_detail_view(request, hostel_name):
-    try:
-        this_hostel = Hostel.objects.get(name=hostel_name)
-    except Hostel.DoesNotExist:
-        raise Http404("Invalid Hostel Name")
-    context = {
-        'hostel': this_hostel,
-        'rooms': Room.objects.filter(
-            hostel=this_hostel)}
-    return render(request, 'hostels.html', context)
 
 
 def user_leave(request):
     if request.method == 'POST':
         form = LeaveForm(request.POST)
         if form.is_valid() & request.user.student.room_allotted:
-            leave_form = form.save(commit=False)
-            student = request.user.student
-            leave_form.student = student
-            leave_form.save()
-            leaves = Leave.objects.filter(student = request.user.student)
-            return render(request, 'profile.html', {'student': student,'leaves': leaves})
 
+            start = form.cleaned_data['start_date']
+            end = form.cleaned_data['end_date']
+            delta = end- start
+            if delta.days > 0 and (start - datetime.date.today()).days >= 0:
+                user_contr = Leave.objects.filter(student = request.user.student,start_date__lte=end,end_date__gte=start)
+                count = user_contr.count()
+                count = int(count)
+                if count == 0:
+                    leave_form = form.save(commit=False)
+                    student = request.user.student
+                    leave_form.student = student
+                    leave_form.save()
+                    leaves = Leave.objects.filter(student = request.user.student)
+
+                    return render(request, 'profile.html', {'student': student,'leaves': leaves})
+                else:
+                    return HttpResponse('<h3>Already have a Leave in this period Try another</h3>  <br> '
+                                        '<a href = \'\' style = "text-align: center; color: Red ;"> Apply Leave </a> ')
+            else:
+                return HttpResponse('<h2> Invalid Date </h2> <br>  <a href = \'\' '
+                                    'style = "text-align: center; color: Red ;"> Apply Leave </a> ')
         elif not request.user.student.room_allotted:
-            return HttpResponse('<h3>First Select a Room </h3> <br> <br> <a href = \'select\'> SELECT A ROOM </a> ')
+            return HttpResponse('<h3>First Select a Room </h3> <br> <a href = \'select\''
+                                ' style = "text-align: center; color: Red ;"> SELECT ROOM </a> ')
 
         else:
             form = LeaveForm()
@@ -340,14 +458,33 @@ def leave_admin(request):
         else:
             warden_hostel = user.warden.hostel
             stud = Student.objects.filter(room__hostel = warden_hostel)
+            # print(stud.values_list('id', flat=True))
             leaves = Leave.objects.filter(student__in=stud).filter(accept=False,reject=False)
-            return render(request, 'pending.html', {'leaves': leaves})
+            today = datetime.datetime.now().date()
+            yesterday = today - datetime.timedelta(15)
+            print(today,yesterday)
+            accepted_leaves = Leave.objects.filter(student__in=stud,accept=True,
+                                                   start_date__lte =today,end_date__gte=yesterday).\
+                order_by('-confirm_time')
+            print(accepted_leaves)
+            return render(request, 'pending.html', {'leaves': leaves,'accepted':accepted_leaves})
     else:
         return HttpResponse('Invalid Login')
 
 
+def student_leaves(request,std_id):
+    today = datetime.datetime.now().date()
+    yesterday = today - datetime.timedelta(60)
+    print(today, yesterday)
+    stud = Student.objects.get(id = std_id)
+    leaves = Leave.objects.filter(student__id=std_id,accept=True,
+                                  start_date__lte=today, end_date__gte=yesterday).order_by('-start_date')
+    return render(request, 'student_leave.html', {'leaves': leaves,'student':stud})
+
+
 def leave_confirm(request,lv_id):
     lv = Leave.objects.get(id = lv_id)
+    lv.confirm_time = datetime.datetime.now()
     lv.accept = True
     lv.save()
     return redirect('../../leave')
@@ -358,3 +495,62 @@ def leave_reject(request, lv_id):
     lv.reject = True
     lv.save()
     return redirect('../../leave')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
+
+
+def BH5_Floor1(request):
+    room_list = Room.objects.order_by('name')
+    room_dict = {'rooms': room_list}
+    return render(request, 'BH5_Floor1.html', context=room_dict)
+
+
+def BH5_Floor2(request):
+    room_list = Room.objects.order_by('name')
+    room_dict = {'rooms': room_list}
+    return render(request, 'BH5_Floor2.html', context=room_dict)
+
+
+def BH5_Floor3(request):
+    room_list = Room.objects.order_by('name')
+    room_dict = {'rooms': room_list}
+    return render(request, 'BH5_Floor3.html', context=room_dict)
+
+
+def BH5_Floor4(request):
+    room_list = Room.objects.order_by('name')
+    room_dict = {'rooms': room_list}
+    return render(request, 'BH5_Floor4.html', context=room_dict)
+
+
+def BH5_Floor5(request):
+    room_list = Room.objects.order_by('name')
+    room_dict = {'rooms': room_list}
+    return render(request, 'BH5_Floor5.html', context=room_dict)
+
+
+def BH5_Floor6(request):
+    room_list = Room.objects.order_by('name')
+    room_dict = {'rooms': room_list}
+    return render(request, 'BH5_Floor6.html', context=room_dict)
+
+
+def BH5_GroundFloor(request):
+    room_list = Room.objects.order_by('name')
+    room_dict = {'rooms': room_list}
+    return render(request, 'BH5_GroundFloor.html', context=room_dict)
+
+
+def hostel_detail_view(request, hostel_name):
+    try:
+        this_hostel = Hostel.objects.get(name=hostel_name)
+    except Hostel.DoesNotExist:
+        raise Http404("Invalid Hostel Name")
+    context = {
+        'hostel': this_hostel,
+        'rooms': Room.objects.filter(
+            hostel=this_hostel).order_by('name')}
+    return render(request, 'hostels.html', context)

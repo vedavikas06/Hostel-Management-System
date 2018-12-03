@@ -1,13 +1,14 @@
 
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 {% block content %}
-<div class="wrap">
+<div class="wrap1">
     <form action="" method="post">
         {% csrf_token %}
       <div class="fields"> Leave Start date <br><br> {{ form.start_date }}</div>
       <div class="fields"> Leave End Date <br><br> {{ form.end_date }}</div>
-      <div class="fields"> Reason <br><br> {{ form.reason }}</div>
+      <div class="fields"> {{ form.reason|as_crispy_field }}</div>
+        <!--<div class="fields">{{ form|crispy }}</div>-->
       <input class="button-custom" type="submit" value="Apply Leave">
     </form>
   </div>
@@ -15,6 +16,9 @@
 
 
 {% block more_links %}
+    <a href="{% url 'student_profile' %}">
+            Profile
+        </a>
     <a href="{% url 'edit' %}">
             Update Details
         </a>

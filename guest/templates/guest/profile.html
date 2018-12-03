@@ -81,12 +81,20 @@
 
                 </div>
             </div>
+        </div>
+    </div>
 
+
+    <div style=" margin: 0 auto;
+            padding: 40px;
+            max-width: 800px;text-align:center;">
             <a class="btn btn-success" href="{% url 'guest:confirm' res.booking_id %}"> Confirm Booking </a>
 
             <a class="btn btn-danger" href="{% url 'guest:cancel' res.booking_id %}"> Cancel Booking </a>
 
             <!--<a class="btn btn-success" href="{% url 'guest:pdf' res.booking_id %}"> Generate PDF </a>-->
+    </div>
+
 
 {% endblock content %}
 

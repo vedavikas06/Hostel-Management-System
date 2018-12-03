@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student, Room, Hostel, Course, User, Warden
+from .models import *
 
 
 @admin.register(Student)
@@ -14,11 +14,37 @@ class StudentAdmin(admin.ModelAdmin):
         'dob',
         'room',
         'room_allotted']
+    actions = ["delete_selected"]
+
+    def delete_selected(self, request, queryset):
+        for element in queryset:
+            element.delete()
+
+    delete_selected.short_description = "Delete selected elements"
+
+
+# class ElementAdmin(admin.ModelAdmin):
+#     class Meta:
+#         actions = ["delete_selected"]
+#
+#         def delete_selected(self, request, queryset):
+#             for element in queryset:
+#                 element.delete()
+#
+#         delete_selected.short_description = "Delete selected elements"
 
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
     list_display = ['no', 'name', 'room_type', 'vacant', 'hostel']
+    actions = ["delete_selected"]
+
+    def delete_selected(self, request, queryset):
+        for element in queryset:
+            element.delete()
+
+    delete_selected.short_description = "Delete selected elements"
+
 
 
 @admin.register(Hostel)
@@ -39,7 +65,18 @@ class CourseAdmin(admin.ModelAdmin):
 @admin.register(Warden)
 class CourseAdmin(admin.ModelAdmin):
     list_display = ['name', 'username']
+    actions = ["delete_selected"]
 
     def username(self, obj):
         return obj.user.username
 
+    def delete_selected(self, request, queryset):
+        for element in queryset:
+            element.delete()
+
+    delete_selected.short_description = "Delete selected elements"
+
+
+@admin.register(Leave)
+class LeaveAdmin(admin.ModelAdmin):
+    list_display = ['student','start_date','end_date','reason','accept','reject','confirm_time']

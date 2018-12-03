@@ -1,25 +1,24 @@
+
 {% extends 'base.html' %}
+
 {% load crispy_forms_tags %}
 {% block content %}
-<!--<div class = "on_wrap">-->
-<div class="wrap1" >
+<div class="wrap1">
     <form action="" method="post">
         {% csrf_token %}
-      <div class="fields">{{ form|crispy }}</div>
-      <input class="button-custom" type="submit" value="UPDATE">
+      <div class="fields">  Room <br>{{ room.no }}</div>
+        <div class="fields">  Hostel <br> {{ room.hostel.name }}</div>
+      <div class="fields"> {{ form|crispy }}</div>
+        <!--<div class="fields">{{ form|crispy }}</div>-->
+      <input class="button-custom" type="submit" value="Register Complaint">
     </form>
   </div>
-<!--</div>-->
-
 {% endblock content %}
 
 
 {% block more_links %}
     <a href="{% url 'student_profile' %}">
             Profile
-        </a>
-    <a href="{% url 'leave_status' %}">
-            Apply Leave
         </a>
     <a href="{% url 'edit' %}">
             Update Details

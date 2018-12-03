@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if not student %}
+    <h2 style = "text-align: center; color: red ;">No Student on Leave</h2>
+    {% else %}
+    <h2 style = "text-align: center; color: red ;">Students on Leave</h2>
+    <div class="wrapper">
+
+        <div class="table">
+
+            <div class="row header">
+
+                <div class="cell">
+                    Student Name
+                </div>
+                <div class="cell">
+                    Enrollment No
+                </div>
+                <div class="cell">
+                    Course
+                </div>
+                <div class="cell">
+                    Gender
+                </div>
+
+            </div>
+            {% for stud in student %}
+                <div class="row">
+
+                    <div class="cell">
+
+                            {{ stud.student_name }}
+
+                    </div>
+                     <div class="cell">
+
+                            {{ stud.enrollment_no }}
+
+                    </div>
+                    <div class="cell">
+
+                            {{ stud.course.code }}
+
+                    </div>
+                    <div class="cell">
+
+                            {{ stud.gender }}
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+      {% endif %}
+{% endblock content %}
+
+
+{% block more_links %}
+    <a href="{% url 'warden_profile' %}">
+        Profile
+    </a>
+    <a href="{% url 'leave_admin' %}">
+        Leave requests
+    </a>
+    <a href="{% url 'empty_rooms' %}">
+        Empty Rooms
+    </a>
+    <a href="{% url 'mess_rebate' %}">
+        Mess Rebate
+    </a>
+    <!--<a href="{% url 'warden_dues' %}">-->
+        <!--Dues-->
+    <!--</a>-->
+    <!--<a href="{% url 'warden_add_due' %}">-->
+        <!--Add Due-->
+    <!--</a>-->
+    <!--<a href="{% url 'warden_remove_due' %}">-->
+        <!--Remove Due-->
+    <!--</a>-->
+    <a href="{% url 'logout' %}">
+        Logout
+    </a>
+{% endblock more_links %}

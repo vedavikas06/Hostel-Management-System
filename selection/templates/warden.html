@@ -8,10 +8,10 @@
 
             <div class="row header">
                 <div class="cell">
-                    Room Number
+                    Hostel
                 </div>
                 <div class="cell">
-                    Room Id
+                    Room No
                 </div>
                 <div class="cell">
                     Type
@@ -20,16 +20,29 @@
                     Status
                 </div>
                 <div class="cell">
-                    Allotted To
+                    Student Name
                 </div>
+                <div class="cell">
+                    Enrollment No
+                </div>
+                <div class="cell">
+                    Course
+                </div>
+                <div class="cell">
+                    Gender
+                </div>
+                <div class="cell">
+                    Maintenance
+                </div>
+
             </div>
             {% for room in rooms %}
                 <div class="row">
                     <div class="cell" data-title="Number">
-                        {{ room.no }}
+                        {{ room.hostel.name }}
                     </div>
                     <div class="cell" data-title="Name">
-                        {{ room.name }}
+                        {{ room.no }}
                     </div>
                     <div class="cell" data-title="Type">
                         {{ room.room_type }}
@@ -41,62 +54,35 @@
                         {% if room.vacant %}
                             -
                         {% else %}
-                            <div class="box">
-                                <a class="button" href="#popup1">{{ room.student }}</a>
-                            </div>
-
-                            <div id="popup1" class="overlay">
-                                <div class="popup">
-                                    <h2>Student Details</h2>
-                                    <a class="close" href="#">&times;</a>
-                                    <div class="content">
-                                        <div class="table">
-
-                                            <div class="row">
-                                                <div class="cell">
-                                                    Student Name
-                                                </div>
-                                                <div class="cell">
-                                                    {{ room.student.student_name }}
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="cell">
-                                                    Father's Name
-                                                </div>
-                                                <div class="cell">
-                                                    {{ room.student.father_name }}
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="cell">
-                                                    Enrollment Number
-                                                </div>
-                                                <div class="cell">
-                                                    {{ room.student.course }}
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="cell">
-                                                    Date of birth (yyyy-mm-dd)
-                                                </div>
-                                                <div class="cell">
-                                                    {{ room.student.dob }}
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="cell">
-                                                    Gender
-                                                </div>
-                                                <div class="cell">
-                                                    {{ room.student.gender }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                            {{ room.student.student_name }}
+                        {% endif %}
+                    </div>
+                     <div class="cell">
+                        {% if room.vacant %}
+                            -
+                        {% else %}
+                            {{ room.student.enrollment_no }}
+                        {% endif %}
+                    </div>
+                    <div class="cell">
+                        {% if room.vacant %}
+                            -
+                        {% else %}
+                            {{ room.student.course.code }}
+                        {% endif %}
+                    </div>
+                    <div class="cell">
+                        {% if room.vacant %}
+                            -
+                        {% else %}
+                            {{ room.student.gender }}
+                        {% endif %}
+                    </div>
+                    <div class="cell">
+                        {% if room.repair %}
+                             {{ room.repair }}
+                        {% else %}
+                            -
                         {% endif %}
                     </div>
                 </div>
@@ -109,6 +95,15 @@
 {% block more_links %}
     <a href="{% url 'leave_admin' %}">
         Leave requests
+    </a>
+    <a href="{% url 'empty_rooms' %}">
+        Empty Rooms
+    </a>
+    <a href="{% url 'present_leaves' %}">
+        Present Leave
+    </a>
+    <a href="{% url 'mess_rebate' %}">
+        Mess Rebate
     </a>
     <a href="{% url 'warden_dues' %}">
         Dues
@@ -123,3 +118,61 @@
         Logout
     </a>
 {% endblock more_links %}
+
+
+
+    <!---->
+<!--<div class="box">-->
+    <!--<a class="button" href="#popup1">{{ room.student }}</a>-->
+    <!--</div>-->
+    <!---->
+    <!--<div id="popup1" class="overlay">-->
+    <!--<div class="popup">-->
+        <!--<h2>Student Details</h2>-->
+        <!--<a class="close" href="#">&times;</a>-->
+        <!--<div class="content">-->
+            <!--<div class="table">-->
+    <!---->
+                <!--<div class="row">-->
+                    <!--<div class="cell">-->
+                        <!--Student Name-->
+                    <!--</div>-->
+                    <!--<div class="cell">-->
+                        <!--{{ room.student.student_name }}-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<div class="cell">-->
+                        <!--Father's Name-->
+                    <!--</div>-->
+                    <!--<div class="cell">-->
+                        <!--{{ room.student.father_name }}-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<div class="cell">-->
+                        <!--Enrollment Number-->
+                    <!--</div>-->
+                    <!--<div class="cell">-->
+                        <!--{{ room.student.course }}-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<div class="cell">-->
+                        <!--Date of birth (yyyy-mm-dd)-->
+                    <!--</div>-->
+                    <!--<div class="cell">-->
+                        <!--{{ room.student.dob }}-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<div class="cell">-->
+                        <!--Gender-->
+                    <!--</div>-->
+                    <!--<div class="cell">-->
+                        <!--{{ room.student.gender }}-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->

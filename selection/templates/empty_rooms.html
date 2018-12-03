@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+     <h2 style = "text-align: center; color: red ;">Empty Rooms </h2>
     <div class="wrapper">
 
         <div class="table">
 
             <div class="row header">
                 <div class="cell">
-                    Room Number
+                    Hostel
                 </div>
                 <div class="cell">
-                    Room Id
+                    Room No
                 </div>
                 <div class="cell">
                     Type
@@ -19,24 +19,56 @@
                 <div class="cell">
                     Status
                 </div>
+
             </div>
             {% for room in rooms %}
                 <div class="row">
                     <div class="cell" data-title="Number">
-                        {{ room.no }}
+                        {{ room.hostel.name }}
                     </div>
                     <div class="cell" data-title="Name">
-                        {{ room.name }}
+                        {{ room.no }}
                     </div>
                     <div class="cell" data-title="Type">
                         {{ room.room_type }}
                     </div>
-                    <div class="cell" style="{% if room.vacant %} color: green {% else %} color:Red {% endif %}" data-title="Status">
+                    <div class="cell" style="{% if room.vacant %} color: green {% endif %}" data-title="Status">
                         {% if room.vacant %} vacant {% else %} occupied {% endif %}
                     </div>
+
                 </div>
             {% endfor %}
         </div>
-
     </div>
 {% endblock content %}
+
+
+{% block more_links %}
+    <a href="{% url 'warden_profile' %}">
+        Profile
+    </a>
+    <a href="{% url 'leave_admin' %}">
+        Leave requests
+    </a>
+    <a href="{% url 'present_leaves' %}">
+        Present Leave
+    </a>
+    <a href="{% url 'mess_rebate' %}">
+        Mess Rebate
+    </a>
+    <!--<a href="{% url 'warden_dues' %}">-->
+        <!--Dues-->
+    <!--</a>-->
+    <!--<a href="{% url 'warden_add_due' %}">-->
+        <!--Add Due-->
+    <!--</a>-->
+    <!--<a href="{% url 'warden_remove_due' %}">-->
+        <!--Remove Due-->
+    <!--</a>-->
+    <a href="{% url 'logout' %}">
+        Logout
+    </a>
+{% endblock more_links %}
+
+
+

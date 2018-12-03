@@ -1,23 +1,34 @@
 
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
+<!--<div class = "on_wrap">-->
 <div class="wrap">
     <form action="" method="post">
         {% csrf_token %}
-      <div class="fields"> Student Name <br><br> {{ form.student_name }}</div>
-      <div class="fields"> Father's Name <br><br> {{ form.father_name }}</div>
-      <div class="fields"> Enrollment Number <br><br> {{ form.enrollment_no }}</div>
-      <div class="fields"> Course {{ form.course }}</div>
-      <div class="fields"> Date of birth (yyyy-mm-dd) <br><br> {{ form.dob }}</div>
-      <div class="fields"> Gender {{ form.gender }}</div>
-      <input class="button-custom" type="submit" value="DONE">
+
+      <!--<div class="fields"> Student Name <br> {{ form.student_name }}</div>-->
+      <!--<div class="fields"> Father's Name <br> {{ form.father_name }}</div>-->
+      <!--<div class="fields"> Enrollment Number <br> {{ form.enrollment_no }}</div>-->
+      <!--<div class="fields"> Course {{ form.course }}</div>-->
+      <!--<div class="fields"> Date of birth (yyyy-mm-dd) <br> {{ form.dob }}</div>-->
+      <!--<div class="fields"> Gender {{ form.gender }}</div>-->
+      <!--<input class="button-custom" type="submit" value="DONE">-->
+        {{ form|crispy }}
+        <input class="button-custom" type="submit" value="DONE">
     </form>
+
   </div>
+
+    <!--</div>-->
 {% endblock content %}
 
 
 {% block more_links %}
+     <a href="{% url 'student_profile' %}">
+            Profile
+        </a>
     <a href="{% url 'edit' %}">
             Update Details
         </a>

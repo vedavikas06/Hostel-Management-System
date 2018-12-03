@@ -13,20 +13,28 @@
                     {{ student.student_name }}
                 </div>
             </div>
-            <div class="row">
-                <div class="cell">
-                    Father's Name
-                </div>
-                <div class="cell">
-                    {{ student.father_name }}
-                </div>
-            </div>
+            <!--<div class="row">-->
+                <!--<div class="cell">-->
+                    <!--Father's Name-->
+                <!--</div>-->
+                <!--<div class="cell">-->
+                    <!--{{ student.father_name }}-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="row">
                 <div class="cell">
                     Enrollment Number
                 </div>
                 <div class="cell">
-                    {{ student.course }}
+                    {{ student.enrollment_no }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell">
+                    Course
+                </div>
+                <div class="cell">
+                    {{ student.course.code }}
                 </div>
             </div>
             <div class="row">
@@ -66,9 +74,15 @@
                 </div>
             </div>
         </div>
+        {% if student.room_allotted %}
+            <a class="button-custom" href="{% url 'select' %}">
+           Update your Room
+        </a>
+        {% else %}
         <a class="button-custom" href="{% url 'select' %}">
             Select a Room
         </a>
+        {% endif %}
     </div>
 
     <h2 style = "text-align: center; color: blue ;" > Previous Leave Requests</h2>
@@ -127,9 +141,22 @@
     <a href="{% url 'edit' %}">
             Update Details
         </a>
+         {% if student.room_allotted %}
+        <a href="{% url 'select' %}">
+            Update Room
+        </a>
+        {% else %}
         <a href="{% url 'select' %}">
             Select a Room
         </a>
+        {% endif %}
+
+        <a href="{% url 'repair' %}">
+            Room Maintenance
+        </a>
+
+
+
         <a href="{% url 'leave_status' %}">
             Apply Leave
         </a>

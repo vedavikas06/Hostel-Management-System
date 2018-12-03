@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+   {% if leaves %}
+    <h2 style = "text-align: center; color: blue ;" > Accepted Leave Requests of {{student.student_name}}({{student.enrollment_no}})</h2>
+
+    <div class="wrapper">
+        <div class="table">
+
+            <div class="row header">
+
+                <div class="cell">
+                    Start Date
+                </div>
+                <div class="cell">
+                    End Date
+                </div>
+                <div class="cell">
+                    Reason
+                </div>
+
+            </div>
+            {% for leave in leaves %}
+                <div class="row">
+                    <div class="cell">
+                        {{leave.start_date}}
+                    </div>
+                    <div class="cell">
+                        {{leave.end_date}}
+                    </div>
+                    <div class="cell">
+                        {{leave.reason}}
+                    </div>
+
+
+                 </div>
+            {% endfor %}
+
+
+
+        </div>
+
+    </div>
+    {% else %}
+    <h2 style = "text-align: center; color: blue ;" > No  Leave Requests of {{student.student_name}}({{student.enrollment_no}})</h2>
+    {% endif %}
+
+{% endblock content %}
+
+
+{% block more_links %}
+    <a href="{% url 'warden_profile' %}">
+        Profile
+    </a>
+    <a href="{% url 'leave_admin' %}">
+        Leave requests
+    </a>
+    <a href="{% url 'empty_rooms' %}">
+        Empty Rooms
+    </a>
+    <a href="{% url 'present_leaves' %}">
+        Present Leave
+    </a>
+    <a href="{% url 'logout' %}">
+        Logout
+    </a>
+{% endblock more_links %}

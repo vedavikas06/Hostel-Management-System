@@ -16,36 +16,22 @@
                             {{ student.student_name }}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="cell">
-                            Father's Name
-                        </div>
-                        <div class="cell">
-                            {{ student.father_name }}
-                        </div>
-                    </div>
+
                     <div class="row">
                         <div class="cell">
                             Enrollment Number
                         </div>
                         <div class="cell">
+                            {{ student.enrollment_no }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="cell">
+                            Course
+                        </div>
+                        <div class="cell">
                             {{ student.course }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="cell">
-                            Date of birth (yyyy-mm-dd)
-                        </div>
-                        <div class="cell">
-                            {{ student.dob }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="cell">
-                            Gender
-                        </div>
-                        <div class="cell">
-                            {{ student.gender }}
                         </div>
                     </div>
                 </div>
@@ -60,9 +46,15 @@
 
 
 {% block more_links %}
-    <a href="{% url 'warden_dues' %}">
-        Dues
+    <a href="{% url 'warden_profile' %}">
+        Profile
     </a>
+    <a href="{% url 'empty_rooms' %}">
+        Empty Rooms
+    </a>
+    <!--<a href="{% url 'warden_dues' %}">-->
+        <!--Dues-->
+    <!--</a>-->
     <a href="{% url 'warden_add_due' %}">
         Add Due
     </a>
