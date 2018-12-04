@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="wrap">
+    {% for hostel in hostels %}
+    <a class="button-custom" href="{% url 'hostel' hostel.name %}">
+        Hostel - {{hostel.name}}
+    </a>
+    {% endfor %}
+
+  </div>
+
+{% endblock content %}
+
+
+{% block more_links %}
+    <!--<a href="{% url 'login' %}">Login</a>-->
+    <!--<a href="{% url 'reg_form' %}">Register</a>-->
+    <!--<a href="{% url 'guest:start' %}">Guest Room Booking</a>-->
+    <a href="{% url 'register' %}">Hostel System</a>
+    <a href="{% url 'guest:start' %}">Guest Room Booking</a>
+{% endblock more_links %}

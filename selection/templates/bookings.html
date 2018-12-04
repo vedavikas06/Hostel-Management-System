@@ -1,35 +1,16 @@
-{% extends 'guest/base.html' %}
-
-   {% block design %}
-
-.s_book{
-
-    padding: 30px;
-    text-align: center; color: red ;
+{% extends 'base.html' %}
 
 
-}
-
-table.test td.test {
-    background-color: lime;
-    margin: 12px 12px 12px 12px;
-    padding: 12px 12px 12px 12px;
-}
-table.test {
-    border-collapse: separate;
-    border-spacing: 10px;
-    *border-collapse: expression('separate', cellSpacing = '10px');
-}
-
-    {% endblock design %}
 {% block content %}
 
 
 
 {% if bookings.count == 0 %}
-<center><h4 class = 's_book'> No Bookings Done!!</h4></center>
+<center><h4 class = 's_book' style="padding: 30px;
+    text-align: center; color: red ;"> No Bookings Done!!</h4></center>
 {% else %}
-<center> <h3 class = 's_book'> ALL Successful Bookings of {{guest.first_name}}  {{guest.last_name}} ({{guest.user.username}})</h3></center>
+<center> <h3 class = 's_book' style="padding: 30px;
+    text-align: center; color: red ;"> ALL Successful Bookings of {{guest.first_name}}  {{guest.last_name}} ({{guest.user.username}})</h3></center>
 <!--<table class = 'test'>-->
 
 
@@ -97,9 +78,7 @@ table.test {
                 <div class="cell">
                     Status
                 </div>
-                <div class="cell">
-                    Cancel
-                </div>
+
             </div>
             {% for booking in bookings %}
                 <div class="row">
@@ -115,7 +94,7 @@ table.test {
                     <div class="cell" data-title="Date">
                         {{booking.checkOut}}
                     </div>
-                    <div class="cell" style="{% if booking.accept %} color: green {% elif booking.reject %} color:Red {% else %} color: blue {% endif %}"  data-title="status">
+                    <div class="cell" style="{% if booking.accept %} color: green {% elif booking.reject %} color:Red {% endif %}" data-title="status">
 
                         {% if booking.accept %}
                         Accepted
@@ -127,15 +106,7 @@ table.test {
 
                     </div>
 
-                    <div class="cell">
-                        {% if booking.accept %}
-                         <a class="btn btn-danger" href="{% url 'guest:cancel' booking.booking_id %}"> Cancel Booking </a>
-                        {% elif booking.reject %}
-                        Already Rejected
-                        {% else %}
-                         <a class="btn btn-danger" href="{% url 'guest:cancel' booking.booking_id %}"> Cancel Booking </a>
-                        {% endif %}
-                    </div>
+
 
                 </div>
             {% endfor %}
@@ -151,7 +122,23 @@ table.test {
 
 
 {% block more_links %}
-    <a href="{% url 'guest:home' %}"> Book A Room! </a>
-    <a href="{% url 'guest:logout' %}">Logout</a>
+      <a href="{% url 'leave_admin' %}">
+        Leave requests
+    </a>
+    <a href="{% url 'empty_rooms' %}">
+        Empty Rooms
+    </a>
+    <a href="{% url 'present_leaves' %}">
+        Present Leave
+    </a>
+    <a href="{% url 'mess_rebate' %}">
+        Mess Rebate
+    </a>
+    <a href="{% url 'guest_requests' %}">
+        Guest Room Requests
+    </a>
+    <a href="{% url 'logout' %}">
+        Logout
+    </a>
 {% endblock more_links %}
 

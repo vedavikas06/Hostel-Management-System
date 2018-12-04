@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2 style = "text-align: center; color: Red ;" > Mess Rebate List for  <form action="" method="post">
+    <h2 style = "text-align: center; color: Red ;" > Mess Rebate List of all Students(For this Month until yesterday)  <form action="" method="post">
         {% csrf_token %}
 
       <!--<div class="fields"> Student Name <br> {{ form.student_name }}</div>-->
@@ -14,7 +14,7 @@
         {{ form.rebate }}
 
         <br>
-        <input class="button-custom" type="submit" value="DONE">
+        <input class="button-custom" type="submit" value="Submit">
     </form>
 
     </h2>

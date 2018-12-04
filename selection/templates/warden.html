@@ -47,7 +47,7 @@
                     <div class="cell" data-title="Type">
                         {{ room.room_type }}
                     </div>
-                    <div class="cell" style="{% if room.vacant %} color: green {% endif %}" data-title="Status">
+                    <div class="cell" style="{% if room.vacant %} color: green {% else %} color :blue {% endif %}" data-title="Status">
                         {% if room.vacant %} vacant {% else %} occupied {% endif %}
                     </div>
                     <div class="cell">
@@ -104,6 +104,9 @@
     </a>
     <a href="{% url 'mess_rebate' %}">
         Mess Rebate
+    </a>
+    <a href="{% url 'guest_requests' %}">
+        Guest Room Requests
     </a>
     <a href="{% url 'warden_dues' %}">
         Dues

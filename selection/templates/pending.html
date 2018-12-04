@@ -96,7 +96,7 @@
             {% for leave in accepted %}
                 <div class="row">
                     <div class="cell">
-                        {{leave.student.student_name}}
+                        <a  href="{% url 'student_leaves' leave.student.id %}"> {{leave.student.student_name}} </a>
                     </div>
                     <div class="cell">
                         {{leave.student.enrollment_no}}

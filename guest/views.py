@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.template.loader import get_template
 from .utils import render_to_pdf
+from django.core.exceptions import ObjectDoesNotExist
+
 # Create your views here.
 
 
@@ -98,7 +100,7 @@ def home(request):
                 x = Room.objects.none()
                 print(Room.objects.all())
                 for room in Room.objects.all():
-                    RoomsBooked = Reservation.objects.filter(room=room,room_alloted=True).\
+                    RoomsBooked = Reservation.objects.filter(room=room,room_alloted=True,accept=True).\
                         filter(checkIn__lte=end_date,checkOut__gte=start_date)
                     print(RoomsBooked)
                     count = RoomsBooked.count()
@@ -211,7 +213,7 @@ def select(request, res_id):
         print(Room.objects.all())
         cnt = 0
         for room in Room.objects.all():
-            RoomsBooked = Reservation.objects.filter(room=room,room_alloted=True).\
+            RoomsBooked = Reservation.objects.filter(room=room,room_alloted=True,accept=True).\
                 filter(checkIn__lte=end_date, checkOut__gte=start_date)
             print(RoomsBooked.values())
             count = RoomsBooked.count()
@@ -227,12 +229,26 @@ def select(request, res_id):
         form.fields["room"].queryset = x
         return render(request, 'guest/select.html', {'form': form,'res':res})
 
+
 @login_required
 def bookings(request):
-    guest = request.user.guest
-    all_bookings = Reservation.objects.filter(guest=guest,room_alloted = True)
-    print(all_bookings.count)
-    return render(request,'guest/bookings.html',{"bookings":all_bookings,"guest":guest})
+    try:
+        guest = request.user.guest
+        print(guest.first_name)
+    except ObjectDoesNotExist:
+        guest = Guest.objects.none()
+
+    if guest:
+        all_bookings = Reservation.objects.none()
+        all_bookings = all_bookings | Reservation.objects.filter(guest=guest,room_alloted = True,accept=True)
+        all_bookings = all_bookings | Reservation.objects.filter(guest=guest, room_alloted=True, reject=True)
+        all_bookings = all_bookings | Reservation.objects.filter(guest=guest, room_alloted=True, accept=False,reject=False)
+        print(all_bookings.count)
+        return render(request,'guest/bookings.html',{"bookings":all_bookings,"guest":guest})
+    elif request.user:
+
+        return render(request, 'guest/bookings.html',{"bookings":Reservation.objects.none(),"guest":guest})
+
 
 @login_required
 def confirm(request,res_id):
@@ -241,6 +257,7 @@ def confirm(request,res_id):
     res.room_alloted = True
     res.save()
     return render(request,'guest/confirm.html',{"res_id":res_id} )
+
 
 @login_required
 def generate_pdf(request,res_id):

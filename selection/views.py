@@ -5,6 +5,8 @@ from selection.models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import datetime,calendar
+from guest.models  import Room as Guest_Room,Reservation,Guest
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def home(request):
@@ -343,6 +345,67 @@ def empty_rooms(request):
         return HttpResponse('Invalid Login')
 
 
+def guest_requests(request):
+    user = request.user
+    if user is not None:
+        if not user.is_warden:
+            return HttpResponse('Invalid Login')
+        elif user.is_active:
+            guest_request = Reservation.objects.filter(room_alloted = True,accept=False,reject=False)
+            accepted_requests = Reservation.objects.filter(room_alloted = True,accept=True).order_by('-booking_id')[:10]
+            print('true')
+            return render(request, 'guest_requests.html', {'requests': guest_request,'accepted':accepted_requests})
+        else:
+            return HttpResponse('Disabled account')
+    else:
+        return HttpResponse('Invalid Login')
+
+
+def bookings(request,b_id):
+    try:
+        guest = Reservation.objects.get(booking_id = b_id).guest
+        print(guest.first_name)
+    except ObjectDoesNotExist:
+        guest = Guest.objects.none()
+
+    if guest:
+        all_bookings = Reservation.objects.none()
+        all_bookings = all_bookings | Reservation.objects.filter(guest=guest,room_alloted = True,accept=True)
+        all_bookings = all_bookings | Reservation.objects.filter(guest=guest, room_alloted=True, reject=True)
+        all_bookings = all_bookings | Reservation.objects.filter(guest=guest, room_alloted=True, accept=False,reject=False)
+        print(all_bookings.count)
+        return render(request,'bookings.html',{"bookings":all_bookings,"guest":guest})
+    else:
+
+        return render(request, 'bookings.html',{"bookings":Reservation.objects.none(),"guest":guest})
+
+
+@login_required
+def guest_accept(request,res_id):
+    res = Reservation.objects.get(booking_id=res_id)
+
+    if res.room_alloted is True:
+        res.accept = True
+    else:
+        res.reject = True
+
+    res.save()
+    return redirect('../../guest_requests')
+
+
+@login_required
+def guest_reject(request, res_id):
+    res = Reservation.objects.get(booking_id=res_id)
+
+    if res.room_alloted is True:
+        res.reject = True
+        res.save()
+    else:
+        res.delete()
+
+    return redirect('../../guest_requests')
+
+
 def present_leaves(request):
     user = request.user
     if user is not None:
@@ -384,12 +447,14 @@ def mess_rebate(request):
                 for stud_id in stud:
                     cnt = 0
                     for leave in leaves:
-                        if leave.student.id == stud_id.id and (leave.start_date.month == this_month or leave.end_date.month == this_month) and (reb-leave.end_date).days > 0 :
-                            # if  (reb-leave.end_date).days >= 0:
+                        if leave.student.id == stud_id.id and (leave.start_date.month == this_month or leave.end_date.month == this_month)  :
+                            if (reb-leave.end_date).days > 0:
 
-                            dayz = abs(leave.end_date-first_day).days - abs(leave.start_date-first_day).days + 1
+                                dayz = abs(leave.end_date-first_day).days - abs(leave.start_date-first_day).days + 1
+                            else:
+                                dayz = abs(reb - first_day).days - abs(leave.start_date - first_day).days
                             #print(leave.start_date, first_day, abs(leave.start_date - first_day).days)
-                            print(leave.end_date,first_day,abs(leave.end_date-first_day).days,stud_id.student_name)
+                            print(leave.end_date,first_day,stud_id.student_name,dayz)
                             cnt = cnt+dayz
                     stud_rebate_list[stud_id.enrollment_no] = cnt
                 print(stud_rebate_list)
@@ -409,7 +474,6 @@ def mess_rebate(request):
         stud=Student.objects.none()
 
         return render(request, 'mess_rebate.html', {'form': form,'count_rebate': stud_rebate_list,'student': stud})
-
 
 
 def user_leave(request):
@@ -542,6 +606,11 @@ def BH5_GroundFloor(request):
     room_list = Room.objects.order_by('name')
     room_dict = {'rooms': room_list}
     return render(request, 'BH5_GroundFloor.html', context=room_dict)
+
+
+def hostels(request):
+    hostels_all = Hostel.objects.order_by('name')
+    return render(request, 'hostels_all.html', {'hostels':hostels_all})
 
 
 def hostel_detail_view(request, hostel_name):

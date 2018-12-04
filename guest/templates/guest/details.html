@@ -1,16 +1,16 @@
 {% extends 'guest/base.html' %}
 {% block design %}
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
+<!--table {-->
+    <!--font-family: arial, sans-serif;-->
+    <!--border-collapse: collapse;-->
+    <!--width: 100%;-->
+<!--}-->
 
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
+<!--td, th {-->
+    <!--border: 1px solid #dddddd;-->
+    <!--text-align: left;-->
+    <!--padding: 8px;-->
+<!--}-->
 
 <!--tr:nth-child(even) {-->
     <!--background-color: #dddddd;-->
@@ -21,38 +21,75 @@ td, th {
 {% block content %}
 
 
-
-
-<h1 style="color:Tomato;" > Available No of rooms ..  {{ count }} </h1>
-<table>
-
-
-     <tr>
-        <th> Room No.. </th>
-        <th> Price</th>
-     </tr>
-
-
-    {% for room in rooms %}
-
-     <tr>
-        <td> {{room.no}} </td>
-        <td> {{room.price}} </td>
-    </tr>
-
-    {% endfor %}
-
-
-</table>
-
-<br>
-<br>
-
 {% if count %}
+
+<h1 style="color:Tomato;text-align: center;" > Available No of rooms ..  {{ count }} </h1>
+<!--<table>-->
+
+
+     <!--<tr>-->
+        <!--<th> Room No.. </th>-->
+        <!--<th> Price</th>-->
+     <!--</tr>-->
+
+
+    <!--{% for room in rooms %}-->
+
+     <!--<tr>-->
+        <!--<td> {{room.no}} </td>-->
+        <!--<td> {{room.price}} </td>-->
+    <!--</tr>-->
+
+    <!--{% endfor %}-->
+
+
+<!--</table>-->
+
+<div class="wrapper" style="
+    padding-top: 40px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+">
+
+        <div class="table">
+
+            <div class="row header">
+                <div class="cell">
+                    Room No
+                </div>
+                <div class="cell">
+                    Price
+                </div>
+                <div class="cell">
+                    Max Persons
+                </div>
+
+            </div>
+            {% for room in rooms %}
+                <div class="row">
+                    <div class="cell" data-title="Number">
+                        {{room.no}}
+                    </div>
+                    <div class="cell" data-title="Name">
+                        {{room.price}}
+                    </div>
+                    <div class="cell" data-title="Name">
+                        {{room.max_persons}}
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
 <div class="center" style = "text-align: center;" >
 <a class="btn btn-primary" href="{% url 'guest:select' res.booking_id %}"> Select a Room </a>
 </div>
-    {% else %}
+
+{% else %}
 <h1>No Rooms Available</h1>
 {% endif %}
 
@@ -63,6 +100,7 @@ td, th {
       <!--<input class="button-custom" type="submit" value="SELECT">-->
     <!--</form>-->
   <!--</div>-->
+
 
 {% endblock content %}
 

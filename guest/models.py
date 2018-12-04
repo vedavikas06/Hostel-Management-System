@@ -27,6 +27,8 @@ class Reservation(models.Model):
     booking_id = models.AutoField(primary_key=True)
     guest = models.ForeignKey('Guest', default=None, null=True, on_delete=models.CASCADE)
     room_alloted = models.BooleanField(default=False)
+    accept = models.BooleanField(default=False)
+    reject = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Reservation'

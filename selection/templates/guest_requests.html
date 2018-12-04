@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if not requests %}
+    <h2 style = "text-align: center; color: red ;">No Pending Requests</h2>
+    {% else %}
+    <h2 style = "text-align: center; color: red ;">Pending Requests</h2>
+    <div class="wrapper" style="padding-bottom: 0px;" >
+
+        <div class="table">
+
+
+            <div class="row header">
+                <div class="cell">
+                    ID
+                </div>
+                <div class="cell">
+                    Guest Name
+                </div>
+                <div class="cell">
+                    Room No
+                </div>
+                <div class="cell">
+                    CheckIn
+                </div>
+                <div class="cell">
+                    CheckOut
+                </div>
+
+                <div class="cell">
+                    Accept
+                </div>
+                <div class="cell">
+                    Reject
+                </div>
+            </div>
+            {% for booking in requests %}
+                <div class="row">
+
+                    <div class="cell" data-title="Number">
+                        {{forloop.counter}}
+                    </div>
+                    <div class="cell" >
+                        <a  href="{% url 'bookings' booking.booking_id %}"> {{booking.guest.first_name}} ({{booking.guest.user.username}}) </a>
+                    </div>
+                    <div class="cell" data-title="Number">
+                        {{booking.room.no}}
+                    </div>
+                    <div class="cell" data-title="Date">
+                         {{booking.checkIn}}
+                    </div>
+                    <div class="cell" data-title="Date">
+                        {{booking.checkOut}}
+                    </div>
+                    <div class="cell">
+                    <a class="btn btn-success" href="{% url 'guest_accept' booking.booking_id %}"> Grant  </a>
+                    </div>
+                    <div class="cell">
+                    <a class="btn btn-danger" href="{% url 'guest_reject' booking.booking_id %}"> Reject  </a>
+                    </div>
+
+
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <br>
+
+
+    {% if accepted %}
+    <h2 style = "text-align: center; color: blue ;" > Accepted Guest Room Requests</h2>
+
+    <div class="wrapper" style="padding-top: 20px;" >
+        <div class="table">
+
+             <div class="row header">
+                <div class="cell">
+                    ID
+                </div>
+                 <div class="cell">
+                    Guest Name
+                </div>
+                <div class="cell">
+                    Room No
+                </div>
+                <div class="cell">
+                    CheckIn
+                </div>
+                <div class="cell">
+                    CheckOut
+                </div>
+
+                <div class="cell">
+                    status
+                </div>
+             </div>
+            {% for booking in accepted %}
+                <div class="row">
+
+                    <div class="cell" data-title="Number">
+                        {{forloop.counter}}
+                    </div>
+                     <div class="cell" data-title="value">
+                         <a  href="{% url 'bookings' booking.booking_id %}"> {{booking.guest.first_name}} ({{booking.guest.user.username}}) </a>
+                    </div>
+                    <div class="cell" data-title="Number">
+                        {{booking.room.no}}
+                    </div>
+                    <div class="cell" data-title="Date">
+                         {{booking.checkIn}}
+                    </div>
+                    <div class="cell" data-title="Date">
+                        {{booking.checkOut}}
+                    </div>
+                    <div class="cell" style="{% if booking.accept %} color: green {% else %} color:Red {% endif %}"  data-title="status">
+                        {% if booking.accept %} Accepted {% else %} Rejected {% endif %}
+                    </div>
+
+
+                 </div>
+            {% endfor %}
+
+
+
+        </div>
+
+    </div>
+    {% else %}
+    <h2 style = "text-align: center; color: blue ;" > No Accepted Guest Room Requests</h2>
+
+    {% endif %}
+
+{% endblock content %}
+
+
+{% block more_links %}
+    <a href="{% url 'warden_profile' %}">
+        Profile
+    </a>
+    <a href="{% url 'empty_rooms' %}">
+        Empty Rooms
+    </a>
+    <a href="{% url 'present_leaves' %}">
+        Present Leave
+    </a>
+    <a href="{% url 'mess_rebate' %}">
+        Mess Rebate
+    </a>
+
+    <a href="{% url 'logout' %}">
+        Logout
+    </a>
+{% endblock more_links %}

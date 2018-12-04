@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% if rooms %}
      <h2 style = "text-align: center; color: red ;">Empty Rooms </h2>
     <div class="wrapper">
 
@@ -40,6 +41,10 @@
             {% endfor %}
         </div>
     </div>
+    {% else %}
+     <h2 style = "text-align: center; color: red ;">No Empty Rooms </h2>
+    {% endif %}
+
 {% endblock content %}
 
 

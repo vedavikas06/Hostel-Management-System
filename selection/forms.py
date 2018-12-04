@@ -77,4 +77,4 @@ class RepairForm(forms.ModelForm):
 
 
 class RebateForm(forms.Form):
-    rebate = forms.DateField(initial=datetime.date(year=2018, month=1, day=1), widget=forms.SelectDateWidget(years=YEARS))
+    rebate = forms.DateField(initial=datetime.date.today, widget=forms.SelectDateWidget(years=YEARS))
