@@ -508,8 +508,11 @@
         }
 
         .cell {
+            white-space: nowrap;
             padding: 6px 12px;
             display: table-cell;
+
+
         }
 
         @media screen and (max-width: 580px) {
