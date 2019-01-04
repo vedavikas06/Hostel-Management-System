@@ -1,4 +1,4 @@
-# Hostel-Managment-System in Django
+# Hostel Automation in Django
 
 ## Live version(website) : https://vic006.pythonanywhere.com/
 
